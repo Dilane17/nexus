@@ -1,4 +1,4 @@
-# Nestjs specific
+# NestJS
 /dist
 /node_modules
 /build
@@ -11,15 +11,14 @@ npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
 
-# dotenv environment variable files
+# Dotenv
 .env
 .env.development
 .env.test
 .env.production
 
-# temp directory
+# Temp
 .temp
 .tmp
 
@@ -27,7 +26,7 @@ lerna-debug.log*
 .DS_Store
 Thumbs.db
 
-# React Native / Mobile (à la place de frontend)
+# React Native / Expo
 frontend/node_modules/
 frontend/.expo/
 frontend/.expo-shared/
@@ -39,10 +38,10 @@ frontend/ios/
 *.p12
 *.cer
 
-# Prisma (à ajouter)
+# Prisma
 prisma/migrations/dev.db
 
-# Editeur (à ajouter)
+# Editeur
 .vscode/
 .idea/
 *.swp
