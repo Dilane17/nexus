@@ -10,10 +10,21 @@ datasource db {
 
 model User {
   id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  full_name        String        @db.VarChar(150)
+  firstName        String        @db.VarChar(150)
+  lastName         String        @db.VarChar(150)
   phone            String        @unique @db.VarChar(20)
   email            String?       @unique @db.VarChar(200)
+  city             String? // ex: "Cotonou"
+  district         String? // ex: "Cadjehoun"
+  googleId         String?       @unique // pour OAuth Google
+  avatar           String? // photo de profil Google
   status           user_status   @default(PENDING)
+  // OTP
+  otpCode          String? // code 5 chiffres hashé bcrypt
+  otpExpiry        DateTime? // expiration dans 5 minutes
+  otpType          String? // 'PHONE_VERIFICATION' | 'EMAIL_VERIFICATION'
+  isPhoneVerified  Boolean       @default(false)
+  isEmailVerified  Boolean       @default(false)
   kyc_status       kyc_status    @default(NOT_STARTED)
   kyc_document_url String?       @db.VarChar(500)
   created_at       DateTime      @default(now()) @db.Timestamp(6)
@@ -24,6 +35,8 @@ model User {
   imfStaff         ImfStaff?
   investor         Investor?
   transactions     Transaction[]
+  password         String? //mot de pass haché bcrypt
+  refresh_token    String? //token de rafraîchissement pour les sessions
 
   @@index([kyc_status], map: "idx_users_kyc_status")
   @@index([phone], map: "idx_users_phone")

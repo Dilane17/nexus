@@ -122,14 +122,26 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  full_name: 'full_name',
+  firstName: 'firstName',
+  lastName: 'lastName',
   phone: 'phone',
   email: 'email',
+  city: 'city',
+  district: 'district',
+  googleId: 'googleId',
+  avatar: 'avatar',
   status: 'status',
+  otpCode: 'otpCode',
+  otpExpiry: 'otpExpiry',
+  otpType: 'otpType',
+  isPhoneVerified: 'isPhoneVerified',
+  isEmailVerified: 'isEmailVerified',
   kyc_status: 'kyc_status',
   kyc_document_url: 'kyc_document_url',
   created_at: 'created_at',
-  last_login: 'last_login'
+  last_login: 'last_login',
+  password: 'password',
+  refresh_token: 'refresh_token'
 };
 
 exports.Prisma.InvestorScalarFieldEnum = {

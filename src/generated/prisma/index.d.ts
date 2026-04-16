@@ -3064,76 +3064,148 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
-    full_name: string | null
+    firstName: string | null
+    lastName: string | null
     phone: string | null
     email: string | null
+    city: string | null
+    district: string | null
+    googleId: string | null
+    avatar: string | null
     status: $Enums.user_status | null
+    otpCode: string | null
+    otpExpiry: Date | null
+    otpType: string | null
+    isPhoneVerified: boolean | null
+    isEmailVerified: boolean | null
     kyc_status: $Enums.kyc_status | null
     kyc_document_url: string | null
     created_at: Date | null
     last_login: Date | null
+    password: string | null
+    refresh_token: string | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
-    full_name: string | null
+    firstName: string | null
+    lastName: string | null
     phone: string | null
     email: string | null
+    city: string | null
+    district: string | null
+    googleId: string | null
+    avatar: string | null
     status: $Enums.user_status | null
+    otpCode: string | null
+    otpExpiry: Date | null
+    otpType: string | null
+    isPhoneVerified: boolean | null
+    isEmailVerified: boolean | null
     kyc_status: $Enums.kyc_status | null
     kyc_document_url: string | null
     created_at: Date | null
     last_login: Date | null
+    password: string | null
+    refresh_token: string | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
-    full_name: number
+    firstName: number
+    lastName: number
     phone: number
     email: number
+    city: number
+    district: number
+    googleId: number
+    avatar: number
     status: number
+    otpCode: number
+    otpExpiry: number
+    otpType: number
+    isPhoneVerified: number
+    isEmailVerified: number
     kyc_status: number
     kyc_document_url: number
     created_at: number
     last_login: number
+    password: number
+    refresh_token: number
     _all: number
   }
 
 
   export type UserMinAggregateInputType = {
     id?: true
-    full_name?: true
+    firstName?: true
+    lastName?: true
     phone?: true
     email?: true
+    city?: true
+    district?: true
+    googleId?: true
+    avatar?: true
     status?: true
+    otpCode?: true
+    otpExpiry?: true
+    otpType?: true
+    isPhoneVerified?: true
+    isEmailVerified?: true
     kyc_status?: true
     kyc_document_url?: true
     created_at?: true
     last_login?: true
+    password?: true
+    refresh_token?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
-    full_name?: true
+    firstName?: true
+    lastName?: true
     phone?: true
     email?: true
+    city?: true
+    district?: true
+    googleId?: true
+    avatar?: true
     status?: true
+    otpCode?: true
+    otpExpiry?: true
+    otpType?: true
+    isPhoneVerified?: true
+    isEmailVerified?: true
     kyc_status?: true
     kyc_document_url?: true
     created_at?: true
     last_login?: true
+    password?: true
+    refresh_token?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
-    full_name?: true
+    firstName?: true
+    lastName?: true
     phone?: true
     email?: true
+    city?: true
+    district?: true
+    googleId?: true
+    avatar?: true
     status?: true
+    otpCode?: true
+    otpExpiry?: true
+    otpType?: true
+    isPhoneVerified?: true
+    isEmailVerified?: true
     kyc_status?: true
     kyc_document_url?: true
     created_at?: true
     last_login?: true
+    password?: true
+    refresh_token?: true
     _all?: true
   }
 
@@ -3211,14 +3283,26 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email: string | null
+    city: string | null
+    district: string | null
+    googleId: string | null
+    avatar: string | null
     status: $Enums.user_status
+    otpCode: string | null
+    otpExpiry: Date | null
+    otpType: string | null
+    isPhoneVerified: boolean
+    isEmailVerified: boolean
     kyc_status: $Enums.kyc_status
     kyc_document_url: string | null
     created_at: Date
     last_login: Date | null
+    password: string | null
+    refresh_token: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -3240,14 +3324,26 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    full_name?: boolean
+    firstName?: boolean
+    lastName?: boolean
     phone?: boolean
     email?: boolean
+    city?: boolean
+    district?: boolean
+    googleId?: boolean
+    avatar?: boolean
     status?: boolean
+    otpCode?: boolean
+    otpExpiry?: boolean
+    otpType?: boolean
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: boolean
     kyc_document_url?: boolean
     created_at?: boolean
     last_login?: boolean
+    password?: boolean
+    refresh_token?: boolean
     admin?: boolean | User$adminArgs<ExtArgs>
     agent?: boolean | User$agentArgs<ExtArgs>
     borrower?: boolean | User$borrowerArgs<ExtArgs>
@@ -3259,41 +3355,77 @@ export namespace Prisma {
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    full_name?: boolean
+    firstName?: boolean
+    lastName?: boolean
     phone?: boolean
     email?: boolean
+    city?: boolean
+    district?: boolean
+    googleId?: boolean
+    avatar?: boolean
     status?: boolean
+    otpCode?: boolean
+    otpExpiry?: boolean
+    otpType?: boolean
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: boolean
     kyc_document_url?: boolean
     created_at?: boolean
     last_login?: boolean
+    password?: boolean
+    refresh_token?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    full_name?: boolean
+    firstName?: boolean
+    lastName?: boolean
     phone?: boolean
     email?: boolean
+    city?: boolean
+    district?: boolean
+    googleId?: boolean
+    avatar?: boolean
     status?: boolean
+    otpCode?: boolean
+    otpExpiry?: boolean
+    otpType?: boolean
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: boolean
     kyc_document_url?: boolean
     created_at?: boolean
     last_login?: boolean
+    password?: boolean
+    refresh_token?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
-    full_name?: boolean
+    firstName?: boolean
+    lastName?: boolean
     phone?: boolean
     email?: boolean
+    city?: boolean
+    district?: boolean
+    googleId?: boolean
+    avatar?: boolean
     status?: boolean
+    otpCode?: boolean
+    otpExpiry?: boolean
+    otpType?: boolean
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: boolean
     kyc_document_url?: boolean
     created_at?: boolean
     last_login?: boolean
+    password?: boolean
+    refresh_token?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "full_name" | "phone" | "email" | "status" | "kyc_status" | "kyc_document_url" | "created_at" | "last_login", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "email" | "city" | "district" | "googleId" | "avatar" | "status" | "otpCode" | "otpExpiry" | "otpType" | "isPhoneVerified" | "isEmailVerified" | "kyc_status" | "kyc_document_url" | "created_at" | "last_login" | "password" | "refresh_token", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     admin?: boolean | User$adminArgs<ExtArgs>
     agent?: boolean | User$agentArgs<ExtArgs>
@@ -3318,14 +3450,26 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      full_name: string
+      firstName: string
+      lastName: string
       phone: string
       email: string | null
+      city: string | null
+      district: string | null
+      googleId: string | null
+      avatar: string | null
       status: $Enums.user_status
+      otpCode: string | null
+      otpExpiry: Date | null
+      otpType: string | null
+      isPhoneVerified: boolean
+      isEmailVerified: boolean
       kyc_status: $Enums.kyc_status
       kyc_document_url: string | null
       created_at: Date
       last_login: Date | null
+      password: string | null
+      refresh_token: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -3756,14 +3900,26 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
-    readonly full_name: FieldRef<"User", 'String'>
+    readonly firstName: FieldRef<"User", 'String'>
+    readonly lastName: FieldRef<"User", 'String'>
     readonly phone: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
+    readonly city: FieldRef<"User", 'String'>
+    readonly district: FieldRef<"User", 'String'>
+    readonly googleId: FieldRef<"User", 'String'>
+    readonly avatar: FieldRef<"User", 'String'>
     readonly status: FieldRef<"User", 'user_status'>
+    readonly otpCode: FieldRef<"User", 'String'>
+    readonly otpExpiry: FieldRef<"User", 'DateTime'>
+    readonly otpType: FieldRef<"User", 'String'>
+    readonly isPhoneVerified: FieldRef<"User", 'Boolean'>
+    readonly isEmailVerified: FieldRef<"User", 'Boolean'>
     readonly kyc_status: FieldRef<"User", 'kyc_status'>
     readonly kyc_document_url: FieldRef<"User", 'String'>
     readonly created_at: FieldRef<"User", 'DateTime'>
     readonly last_login: FieldRef<"User", 'DateTime'>
+    readonly password: FieldRef<"User", 'String'>
+    readonly refresh_token: FieldRef<"User", 'String'>
   }
     
 
@@ -25839,14 +25995,26 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    full_name: 'full_name',
+    firstName: 'firstName',
+    lastName: 'lastName',
     phone: 'phone',
     email: 'email',
+    city: 'city',
+    district: 'district',
+    googleId: 'googleId',
+    avatar: 'avatar',
     status: 'status',
+    otpCode: 'otpCode',
+    otpExpiry: 'otpExpiry',
+    otpType: 'otpType',
+    isPhoneVerified: 'isPhoneVerified',
+    isEmailVerified: 'isEmailVerified',
     kyc_status: 'kyc_status',
     kyc_document_url: 'kyc_document_url',
     created_at: 'created_at',
-    last_login: 'last_login'
+    last_login: 'last_login',
+    password: 'password',
+    refresh_token: 'refresh_token'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -26151,20 +26319,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'kyc_status'
-   */
-  export type Enumkyc_statusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'kyc_status'>
-    
-
-
-  /**
-   * Reference to a field of type 'kyc_status[]'
-   */
-  export type ListEnumkyc_statusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'kyc_status[]'>
-    
-
-
-  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -26175,6 +26329,27 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'kyc_status'
+   */
+  export type Enumkyc_statusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'kyc_status'>
+    
+
+
+  /**
+   * Reference to a field of type 'kyc_status[]'
+   */
+  export type ListEnumkyc_statusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'kyc_status[]'>
     
 
 
@@ -26231,13 +26406,6 @@ export namespace Prisma {
    * Reference to a field of type 'momo_provider[]'
    */
   export type ListEnummomo_providerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'momo_provider[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -26361,14 +26529,26 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: UuidFilter<"User"> | string
-    full_name?: StringFilter<"User"> | string
+    firstName?: StringFilter<"User"> | string
+    lastName?: StringFilter<"User"> | string
     phone?: StringFilter<"User"> | string
     email?: StringNullableFilter<"User"> | string | null
+    city?: StringNullableFilter<"User"> | string | null
+    district?: StringNullableFilter<"User"> | string | null
+    googleId?: StringNullableFilter<"User"> | string | null
+    avatar?: StringNullableFilter<"User"> | string | null
     status?: Enumuser_statusFilter<"User"> | $Enums.user_status
+    otpCode?: StringNullableFilter<"User"> | string | null
+    otpExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
+    otpType?: StringNullableFilter<"User"> | string | null
+    isPhoneVerified?: BoolFilter<"User"> | boolean
+    isEmailVerified?: BoolFilter<"User"> | boolean
     kyc_status?: Enumkyc_statusFilter<"User"> | $Enums.kyc_status
     kyc_document_url?: StringNullableFilter<"User"> | string | null
     created_at?: DateTimeFilter<"User"> | Date | string
     last_login?: DateTimeNullableFilter<"User"> | Date | string | null
+    password?: StringNullableFilter<"User"> | string | null
+    refresh_token?: StringNullableFilter<"User"> | string | null
     admin?: XOR<AdminNullableScalarRelationFilter, AdminWhereInput> | null
     agent?: XOR<AgentNullableScalarRelationFilter, AgentWhereInput> | null
     borrower?: XOR<BorrowerNullableScalarRelationFilter, BorrowerWhereInput> | null
@@ -26379,14 +26559,26 @@ export namespace Prisma {
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
-    full_name?: SortOrder
+    firstName?: SortOrder
+    lastName?: SortOrder
     phone?: SortOrder
     email?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    district?: SortOrderInput | SortOrder
+    googleId?: SortOrderInput | SortOrder
+    avatar?: SortOrderInput | SortOrder
     status?: SortOrder
+    otpCode?: SortOrderInput | SortOrder
+    otpExpiry?: SortOrderInput | SortOrder
+    otpType?: SortOrderInput | SortOrder
+    isPhoneVerified?: SortOrder
+    isEmailVerified?: SortOrder
     kyc_status?: SortOrder
     kyc_document_url?: SortOrderInput | SortOrder
     created_at?: SortOrder
     last_login?: SortOrderInput | SortOrder
+    password?: SortOrderInput | SortOrder
+    refresh_token?: SortOrderInput | SortOrder
     admin?: AdminOrderByWithRelationInput
     agent?: AgentOrderByWithRelationInput
     borrower?: BorrowerOrderByWithRelationInput
@@ -26399,33 +26591,57 @@ export namespace Prisma {
     id?: string
     phone?: string
     email?: string
+    googleId?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    full_name?: StringFilter<"User"> | string
+    firstName?: StringFilter<"User"> | string
+    lastName?: StringFilter<"User"> | string
+    city?: StringNullableFilter<"User"> | string | null
+    district?: StringNullableFilter<"User"> | string | null
+    avatar?: StringNullableFilter<"User"> | string | null
     status?: Enumuser_statusFilter<"User"> | $Enums.user_status
+    otpCode?: StringNullableFilter<"User"> | string | null
+    otpExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
+    otpType?: StringNullableFilter<"User"> | string | null
+    isPhoneVerified?: BoolFilter<"User"> | boolean
+    isEmailVerified?: BoolFilter<"User"> | boolean
     kyc_status?: Enumkyc_statusFilter<"User"> | $Enums.kyc_status
     kyc_document_url?: StringNullableFilter<"User"> | string | null
     created_at?: DateTimeFilter<"User"> | Date | string
     last_login?: DateTimeNullableFilter<"User"> | Date | string | null
+    password?: StringNullableFilter<"User"> | string | null
+    refresh_token?: StringNullableFilter<"User"> | string | null
     admin?: XOR<AdminNullableScalarRelationFilter, AdminWhereInput> | null
     agent?: XOR<AgentNullableScalarRelationFilter, AgentWhereInput> | null
     borrower?: XOR<BorrowerNullableScalarRelationFilter, BorrowerWhereInput> | null
     imfStaff?: XOR<ImfStaffNullableScalarRelationFilter, ImfStaffWhereInput> | null
     investor?: XOR<InvestorNullableScalarRelationFilter, InvestorWhereInput> | null
     transactions?: TransactionListRelationFilter
-  }, "id" | "phone" | "email">
+  }, "id" | "phone" | "email" | "googleId">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
-    full_name?: SortOrder
+    firstName?: SortOrder
+    lastName?: SortOrder
     phone?: SortOrder
     email?: SortOrderInput | SortOrder
+    city?: SortOrderInput | SortOrder
+    district?: SortOrderInput | SortOrder
+    googleId?: SortOrderInput | SortOrder
+    avatar?: SortOrderInput | SortOrder
     status?: SortOrder
+    otpCode?: SortOrderInput | SortOrder
+    otpExpiry?: SortOrderInput | SortOrder
+    otpType?: SortOrderInput | SortOrder
+    isPhoneVerified?: SortOrder
+    isEmailVerified?: SortOrder
     kyc_status?: SortOrder
     kyc_document_url?: SortOrderInput | SortOrder
     created_at?: SortOrder
     last_login?: SortOrderInput | SortOrder
+    password?: SortOrderInput | SortOrder
+    refresh_token?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -26436,14 +26652,26 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"User"> | string
-    full_name?: StringWithAggregatesFilter<"User"> | string
+    firstName?: StringWithAggregatesFilter<"User"> | string
+    lastName?: StringWithAggregatesFilter<"User"> | string
     phone?: StringWithAggregatesFilter<"User"> | string
     email?: StringNullableWithAggregatesFilter<"User"> | string | null
+    city?: StringNullableWithAggregatesFilter<"User"> | string | null
+    district?: StringNullableWithAggregatesFilter<"User"> | string | null
+    googleId?: StringNullableWithAggregatesFilter<"User"> | string | null
+    avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
     status?: Enumuser_statusWithAggregatesFilter<"User"> | $Enums.user_status
+    otpCode?: StringNullableWithAggregatesFilter<"User"> | string | null
+    otpExpiry?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    otpType?: StringNullableWithAggregatesFilter<"User"> | string | null
+    isPhoneVerified?: BoolWithAggregatesFilter<"User"> | boolean
+    isEmailVerified?: BoolWithAggregatesFilter<"User"> | boolean
     kyc_status?: Enumkyc_statusWithAggregatesFilter<"User"> | $Enums.kyc_status
     kyc_document_url?: StringNullableWithAggregatesFilter<"User"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"User"> | Date | string
     last_login?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    password?: StringNullableWithAggregatesFilter<"User"> | string | null
+    refresh_token?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type InvestorWhereInput = {
@@ -27733,14 +27961,26 @@ export namespace Prisma {
 
   export type UserCreateInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminCreateNestedOneWithoutUserInput
     agent?: AgentCreateNestedOneWithoutUserInput
     borrower?: BorrowerCreateNestedOneWithoutUserInput
@@ -27751,14 +27991,26 @@ export namespace Prisma {
 
   export type UserUncheckedCreateInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminUncheckedCreateNestedOneWithoutUserInput
     agent?: AgentUncheckedCreateNestedOneWithoutUserInput
     borrower?: BorrowerUncheckedCreateNestedOneWithoutUserInput
@@ -27769,14 +28021,26 @@ export namespace Prisma {
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUpdateOneWithoutUserNestedInput
     agent?: AgentUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUpdateOneWithoutUserNestedInput
@@ -27787,14 +28051,26 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUncheckedUpdateOneWithoutUserNestedInput
     agent?: AgentUncheckedUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUncheckedUpdateOneWithoutUserNestedInput
@@ -27805,38 +28081,74 @@ export namespace Prisma {
 
   export type UserCreateManyInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type InvestorCreateInput = {
@@ -29212,6 +29524,22 @@ export namespace Prisma {
     not?: NestedEnumuser_statusFilter<$PrismaModel> | $Enums.user_status
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type Enumkyc_statusFilter<$PrismaModel = never> = {
     equals?: $Enums.kyc_status | Enumkyc_statusFieldRefInput<$PrismaModel>
     in?: $Enums.kyc_status[] | ListEnumkyc_statusFieldRefInput<$PrismaModel>
@@ -29228,17 +29556,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type AdminNullableScalarRelationFilter = {
@@ -29283,38 +29600,74 @@ export namespace Prisma {
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
-    full_name?: SortOrder
+    firstName?: SortOrder
+    lastName?: SortOrder
     phone?: SortOrder
     email?: SortOrder
+    city?: SortOrder
+    district?: SortOrder
+    googleId?: SortOrder
+    avatar?: SortOrder
     status?: SortOrder
+    otpCode?: SortOrder
+    otpExpiry?: SortOrder
+    otpType?: SortOrder
+    isPhoneVerified?: SortOrder
+    isEmailVerified?: SortOrder
     kyc_status?: SortOrder
     kyc_document_url?: SortOrder
     created_at?: SortOrder
     last_login?: SortOrder
+    password?: SortOrder
+    refresh_token?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
-    full_name?: SortOrder
+    firstName?: SortOrder
+    lastName?: SortOrder
     phone?: SortOrder
     email?: SortOrder
+    city?: SortOrder
+    district?: SortOrder
+    googleId?: SortOrder
+    avatar?: SortOrder
     status?: SortOrder
+    otpCode?: SortOrder
+    otpExpiry?: SortOrder
+    otpType?: SortOrder
+    isPhoneVerified?: SortOrder
+    isEmailVerified?: SortOrder
     kyc_status?: SortOrder
     kyc_document_url?: SortOrder
     created_at?: SortOrder
     last_login?: SortOrder
+    password?: SortOrder
+    refresh_token?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
-    full_name?: SortOrder
+    firstName?: SortOrder
+    lastName?: SortOrder
     phone?: SortOrder
     email?: SortOrder
+    city?: SortOrder
+    district?: SortOrder
+    googleId?: SortOrder
+    avatar?: SortOrder
     status?: SortOrder
+    otpCode?: SortOrder
+    otpExpiry?: SortOrder
+    otpType?: SortOrder
+    isPhoneVerified?: SortOrder
+    isEmailVerified?: SortOrder
     kyc_status?: SortOrder
     kyc_document_url?: SortOrder
     created_at?: SortOrder
     last_login?: SortOrder
+    password?: SortOrder
+    refresh_token?: SortOrder
   }
 
   export type UuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -29378,6 +29731,28 @@ export namespace Prisma {
     _max?: NestedEnumuser_statusFilter<$PrismaModel>
   }
 
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type Enumkyc_statusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.kyc_status | Enumkyc_statusFieldRefInput<$PrismaModel>
     in?: $Enums.kyc_status[] | ListEnumkyc_statusFieldRefInput<$PrismaModel>
@@ -29400,20 +29775,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type DecimalFilter<$PrismaModel = never> = {
@@ -29614,11 +29975,6 @@ export namespace Prisma {
     not?: NestedEnummomo_providerFilter<$PrismaModel> | $Enums.momo_provider
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -29730,14 +30086,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnummomo_providerFilter<$PrismaModel>
     _max?: NestedEnummomo_providerFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -30646,16 +30994,20 @@ export namespace Prisma {
     set?: $Enums.user_status
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type Enumkyc_statusFieldUpdateOperationsInput = {
     set?: $Enums.kyc_status
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type AdminUpdateOneWithoutUserNestedInput = {
@@ -31037,10 +31389,6 @@ export namespace Prisma {
 
   export type Enummomo_providerFieldUpdateOperationsInput = {
     set?: $Enums.momo_provider
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -31760,6 +32108,22 @@ export namespace Prisma {
     not?: NestedEnumuser_statusFilter<$PrismaModel> | $Enums.user_status
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type NestedEnumkyc_statusFilter<$PrismaModel = never> = {
     equals?: $Enums.kyc_status | Enumkyc_statusFieldRefInput<$PrismaModel>
     in?: $Enums.kyc_status[] | ListEnumkyc_statusFieldRefInput<$PrismaModel>
@@ -31776,17 +32140,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -31869,6 +32222,28 @@ export namespace Prisma {
     _max?: NestedEnumuser_statusFilter<$PrismaModel>
   }
 
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedEnumkyc_statusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.kyc_status | Enumkyc_statusFieldRefInput<$PrismaModel>
     in?: $Enums.kyc_status[] | ListEnumkyc_statusFieldRefInput<$PrismaModel>
@@ -31891,20 +32266,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedDecimalFilter<$PrismaModel = never> = {
@@ -31975,11 +32336,6 @@ export namespace Prisma {
     not?: NestedEnummomo_providerFilter<$PrismaModel> | $Enums.momo_provider
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type NestedEnummomo_providerWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.momo_provider | Enummomo_providerFieldRefInput<$PrismaModel>
     in?: $Enums.momo_provider[] | ListEnummomo_providerFieldRefInput<$PrismaModel>
@@ -31988,14 +32344,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnummomo_providerFilter<$PrismaModel>
     _max?: NestedEnummomo_providerFilter<$PrismaModel>
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -32552,14 +32900,26 @@ export namespace Prisma {
 
   export type UserCreateWithoutInvestorInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminCreateNestedOneWithoutUserInput
     agent?: AgentCreateNestedOneWithoutUserInput
     borrower?: BorrowerCreateNestedOneWithoutUserInput
@@ -32569,14 +32929,26 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutInvestorInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminUncheckedCreateNestedOneWithoutUserInput
     agent?: AgentUncheckedCreateNestedOneWithoutUserInput
     borrower?: BorrowerUncheckedCreateNestedOneWithoutUserInput
@@ -32672,14 +33044,26 @@ export namespace Prisma {
 
   export type UserUpdateWithoutInvestorInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUpdateOneWithoutUserNestedInput
     agent?: AgentUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUpdateOneWithoutUserNestedInput
@@ -32689,14 +33073,26 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutInvestorInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUncheckedUpdateOneWithoutUserNestedInput
     agent?: AgentUncheckedUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUncheckedUpdateOneWithoutUserNestedInput
@@ -32875,14 +33271,26 @@ export namespace Prisma {
 
   export type UserCreateWithoutBorrowerInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminCreateNestedOneWithoutUserInput
     agent?: AgentCreateNestedOneWithoutUserInput
     imfStaff?: ImfStaffCreateNestedOneWithoutUserInput
@@ -32892,14 +33300,26 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutBorrowerInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminUncheckedCreateNestedOneWithoutUserInput
     agent?: AgentUncheckedCreateNestedOneWithoutUserInput
     imfStaff?: ImfStaffUncheckedCreateNestedOneWithoutUserInput
@@ -33086,14 +33506,26 @@ export namespace Prisma {
 
   export type UserUpdateWithoutBorrowerInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUpdateOneWithoutUserNestedInput
     agent?: AgentUpdateOneWithoutUserNestedInput
     imfStaff?: ImfStaffUpdateOneWithoutUserNestedInput
@@ -33103,14 +33535,26 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutBorrowerInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUncheckedUpdateOneWithoutUserNestedInput
     agent?: AgentUncheckedUpdateOneWithoutUserNestedInput
     imfStaff?: ImfStaffUncheckedUpdateOneWithoutUserNestedInput
@@ -33243,14 +33687,26 @@ export namespace Prisma {
 
   export type UserCreateWithoutAdminInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     agent?: AgentCreateNestedOneWithoutUserInput
     borrower?: BorrowerCreateNestedOneWithoutUserInput
     imfStaff?: ImfStaffCreateNestedOneWithoutUserInput
@@ -33260,14 +33716,26 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutAdminInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     agent?: AgentUncheckedCreateNestedOneWithoutUserInput
     borrower?: BorrowerUncheckedCreateNestedOneWithoutUserInput
     imfStaff?: ImfStaffUncheckedCreateNestedOneWithoutUserInput
@@ -33293,14 +33761,26 @@ export namespace Prisma {
 
   export type UserUpdateWithoutAdminInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     agent?: AgentUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUpdateOneWithoutUserNestedInput
     imfStaff?: ImfStaffUpdateOneWithoutUserNestedInput
@@ -33310,14 +33790,26 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutAdminInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     agent?: AgentUncheckedUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUncheckedUpdateOneWithoutUserNestedInput
     imfStaff?: ImfStaffUncheckedUpdateOneWithoutUserNestedInput
@@ -33327,14 +33819,26 @@ export namespace Prisma {
 
   export type UserCreateWithoutAgentInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminCreateNestedOneWithoutUserInput
     borrower?: BorrowerCreateNestedOneWithoutUserInput
     imfStaff?: ImfStaffCreateNestedOneWithoutUserInput
@@ -33344,14 +33848,26 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutAgentInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminUncheckedCreateNestedOneWithoutUserInput
     borrower?: BorrowerUncheckedCreateNestedOneWithoutUserInput
     imfStaff?: ImfStaffUncheckedCreateNestedOneWithoutUserInput
@@ -33377,14 +33893,26 @@ export namespace Prisma {
 
   export type UserUpdateWithoutAgentInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUpdateOneWithoutUserNestedInput
     imfStaff?: ImfStaffUpdateOneWithoutUserNestedInput
@@ -33394,14 +33922,26 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutAgentInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUncheckedUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUncheckedUpdateOneWithoutUserNestedInput
     imfStaff?: ImfStaffUncheckedUpdateOneWithoutUserNestedInput
@@ -33411,14 +33951,26 @@ export namespace Prisma {
 
   export type UserCreateWithoutImfStaffInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminCreateNestedOneWithoutUserInput
     agent?: AgentCreateNestedOneWithoutUserInput
     borrower?: BorrowerCreateNestedOneWithoutUserInput
@@ -33428,14 +33980,26 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutImfStaffInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminUncheckedCreateNestedOneWithoutUserInput
     agent?: AgentUncheckedCreateNestedOneWithoutUserInput
     borrower?: BorrowerUncheckedCreateNestedOneWithoutUserInput
@@ -33503,14 +34067,26 @@ export namespace Prisma {
 
   export type UserUpdateWithoutImfStaffInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUpdateOneWithoutUserNestedInput
     agent?: AgentUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUpdateOneWithoutUserNestedInput
@@ -33520,14 +34096,26 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutImfStaffInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUncheckedUpdateOneWithoutUserNestedInput
     agent?: AgentUncheckedUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUncheckedUpdateOneWithoutUserNestedInput
@@ -33915,14 +34503,26 @@ export namespace Prisma {
 
   export type UserCreateWithoutTransactionsInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminCreateNestedOneWithoutUserInput
     agent?: AgentCreateNestedOneWithoutUserInput
     borrower?: BorrowerCreateNestedOneWithoutUserInput
@@ -33932,14 +34532,26 @@ export namespace Prisma {
 
   export type UserUncheckedCreateWithoutTransactionsInput = {
     id?: string
-    full_name: string
+    firstName: string
+    lastName: string
     phone: string
     email?: string | null
+    city?: string | null
+    district?: string | null
+    googleId?: string | null
+    avatar?: string | null
     status?: $Enums.user_status
+    otpCode?: string | null
+    otpExpiry?: Date | string | null
+    otpType?: string | null
+    isPhoneVerified?: boolean
+    isEmailVerified?: boolean
     kyc_status?: $Enums.kyc_status
     kyc_document_url?: string | null
     created_at?: Date | string
     last_login?: Date | string | null
+    password?: string | null
+    refresh_token?: string | null
     admin?: AdminUncheckedCreateNestedOneWithoutUserInput
     agent?: AgentUncheckedCreateNestedOneWithoutUserInput
     borrower?: BorrowerUncheckedCreateNestedOneWithoutUserInput
@@ -33965,14 +34577,26 @@ export namespace Prisma {
 
   export type UserUpdateWithoutTransactionsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUpdateOneWithoutUserNestedInput
     agent?: AgentUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUpdateOneWithoutUserNestedInput
@@ -33982,14 +34606,26 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateWithoutTransactionsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    full_name?: StringFieldUpdateOperationsInput | string
+    firstName?: StringFieldUpdateOperationsInput | string
+    lastName?: StringFieldUpdateOperationsInput | string
     phone?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    district?: NullableStringFieldUpdateOperationsInput | string | null
+    googleId?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     status?: Enumuser_statusFieldUpdateOperationsInput | $Enums.user_status
+    otpCode?: NullableStringFieldUpdateOperationsInput | string | null
+    otpExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    otpType?: NullableStringFieldUpdateOperationsInput | string | null
+    isPhoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
     kyc_status?: Enumkyc_statusFieldUpdateOperationsInput | $Enums.kyc_status
     kyc_document_url?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     last_login?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
     admin?: AdminUncheckedUpdateOneWithoutUserNestedInput
     agent?: AgentUncheckedUpdateOneWithoutUserNestedInput
     borrower?: BorrowerUncheckedUpdateOneWithoutUserNestedInput
