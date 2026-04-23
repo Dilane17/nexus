@@ -1,0 +1,19 @@
+{
+  "name": "nexus",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "bootstrap": "npm install",
+    "start:backend": "npm --workspace backend run start:dev",
+    "build:backend": "npm --workspace backend run build",
+    "lint:backend": "npm --workspace backend run lint",
+    "test:backend": "npm --workspace backend run test",
+    "prisma:generate": "npm --workspace backend run prisma:generate",
+    "start:frontend": "npm --workspace frontend run start",
+    "lint:frontend": "npm --workspace frontend run lint"
+  }
+}
