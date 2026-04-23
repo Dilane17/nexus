@@ -1,0 +1,465 @@
+generator client {
+  provider     = "prisma-client-js"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName        String        @db.VarChar(150)
+  lastName         String        @db.VarChar(150)
+  phone            String        @unique @db.VarChar(20)
+  email            String?       @unique @db.VarChar(200)
+  city             String? // ex: "Cotonou"
+  district         String? // ex: "Cadjehoun"
+  googleId         String?       @unique // pour OAuth Google
+  avatar           String? // photo de profil Google
+  status           user_status   @default(PENDING)
+  // OTP
+  otpCode          String? // code 5 chiffres hashé bcrypt
+  otpExpiry        DateTime? // expiration dans 5 minutes
+  otpType          String? // 'PHONE_VERIFICATION' | 'EMAIL_VERIFICATION'
+  isPhoneVerified  Boolean       @default(false)
+  isEmailVerified  Boolean       @default(false)
+  kyc_status       kyc_status    @default(NOT_STARTED)
+  kyc_document_url String?       @db.VarChar(500)
+  kycSelfieUrl     String?       @map("kyc_selfie_url") @db.VarChar(500)
+  created_at       DateTime      @default(now()) @db.Timestamp(6)
+  last_login       DateTime?     @db.Timestamp(6)
+  admin            Admin?
+  agent            Agent?
+  borrower         Borrower?
+  imfStaff         ImfStaff?
+  investor         Investor?
+  transactions     Transaction[]
+  password         String? //mot de pass haché bcrypt
+  refresh_token    String? //token de rafraîchissement pour les sessions
+
+  // Ajouter ces champs KYC :
+  kycDocumentType    String? // 'CNI' | 'CIP'
+  kycDocumentUrl     String? // URL photo CNI/CIP
+  kycMonthlyIncome   Decimal? // Revenus mensuels déclarés
+  kycIncomeSource    String? // Source de revenus
+  kycMomoStatement   String? // URL relevé MoMo
+  kycRejectionReason String? // Motif rejet par IMF
+  kycSubmittedAt     DateTime? // Date soumission session 3
+  kycValidatedAt     DateTime? // Date validation IMF
+  kycValidatedBy     String? // ID IMF_Staff qui a validé
+  preferred_currency currency_code @default(XOF)
+  push_tokens        String[]      @default([])
+
+  @@index([kyc_status], map: "idx_users_kyc_status")
+  @@index([phone], map: "idx_users_phone")
+  @@index([status], map: "idx_users_status")
+  @@map("users")
+}
+
+model Investor {
+  id                    String                 @id @db.Uuid
+  wallet_balance        Decimal                @default(0.00) @db.Decimal(15, 2)
+  total_invested        Decimal                @default(0.00) @db.Decimal(15, 2)
+  total_returns         Decimal                @default(0.00) @db.Decimal(15, 2)
+  risk_profile          risk_profile           @default(BALANCED)
+  investor_type         investor_type          @default(RETAIL)
+  institutionalInvestor InstitutionalInvestor?
+  investments           Investment[]
+  autoInvestRule        AutoInvestRule?
+  user                  User                   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  retailInvestor        RetailInvestor?
+
+  @@map("investors")
+}
+
+model AutoInvestRule {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  investor_id      String   @unique @db.Uuid
+  is_active        Boolean  @default(true)
+  max_amount       Decimal  @db.Decimal(15, 2)
+  max_duration     Int
+  min_hybrid_score Decimal  @default(0.00) @db.Decimal(5, 2)
+  created_at       DateTime @default(now()) @db.Timestamp(6)
+  investor         Investor @relation(fields: [investor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("auto_invest_rules")
+}
+
+model RetailInvestor {
+  id                 String   @id @db.Uuid
+  max_investment_cap Decimal  @default(5000000.00) @db.Decimal(15, 2)
+  preferred_sectors  String[]
+  investor           Investor @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("retail_investors")
+}
+
+model InstitutionalInvestor {
+  id                 String   @id @db.Uuid
+  organization_name  String   @db.VarChar(200)
+  regulatory_license String   @db.VarChar(100)
+  max_exposure_ratio Decimal  @default(0.3000) @db.Decimal(5, 4)
+  investor           Investor @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("institutional_investors")
+}
+
+model Borrower {
+  id                  String          @id @db.Uuid
+  credit_score        Decimal         @default(0.00) @db.Decimal(5, 2)
+  tontine_score       Decimal         @default(0.00) @db.Decimal(5, 2)
+  mobile_money_number String          @unique @db.VarChar(20)
+  momo_provider       momo_provider
+  has_tontine_history Boolean         @default(false)
+  default_count       Int             @default(0)
+  borrower_scores     BorrowerScore[]
+  user                User            @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  loans               Loan[]
+  tontine_cycles      TontineCycle[]
+  tontine_groups      TontineGroup[]
+  tontine_members     TontineMember[]
+
+  @@index([credit_score], map: "idx_borrowers_credit_score")
+  @@map("borrowers")
+}
+
+model Admin {
+  id          String     @id @db.Uuid
+  role        admin_role @default(SUPPORT)
+  permissions String[]   @default([])
+  user        User       @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("admins")
+}
+
+model Agent {
+  id               String  @id @db.Uuid
+  zone             String  @db.VarChar(100)
+  agency_code      String  @unique @db.VarChar(20)
+  commission_rate  Decimal @default(0.005) @db.Decimal(4, 3)
+  clients_assisted Int     @default(0)
+  user             User    @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("agents")
+}
+
+model ImfStaff {
+  id                  String @id @db.Uuid
+  imf_name            String @db.VarChar(200)
+  license_number      String @unique @db.VarChar(100)
+  bceao_agreement_ref String @db.VarChar(100)
+  user                User   @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  loans               Loan[]
+
+  @@map("imf_staff")
+}
+
+model EscrowWallet {
+  id                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  total_balance         Decimal   @default(0.00) @db.Decimal(15, 2)
+  investor_funds        Decimal   @default(0.00) @db.Decimal(15, 2)
+  pending_disbursements Decimal   @default(0.00) @db.Decimal(15, 2)
+  locked_for_guarantee  Decimal   @default(0.00) @db.Decimal(15, 2)
+  platform_fees         Decimal   @default(0.00) @db.Decimal(15, 2)
+  third_party_manager   String    @db.VarChar(200)
+  last_audit_date       DateTime? @db.Date
+
+  @@map("escrow_wallet")
+}
+
+model PlatformWallet {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  commission_balance   Decimal   @default(0.00) @db.Decimal(15, 2)
+  operating_funds      Decimal   @default(0.00) @db.Decimal(15, 2)
+  last_withdrawal_date DateTime? @db.Timestamp(6)
+
+  @@map("platform_wallet")
+}
+
+model Loan {
+  id                  String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  borrower_id         String        @db.Uuid
+  amount              Decimal       @db.Decimal(15, 2)
+  currency            currency_code @default(XOF)
+  interest_rate       Decimal       @db.Decimal(5, 4)
+  duration_months     Int
+  status              loan_status   @default(PENDING_IMF)
+  monthly_installment Decimal       @db.Decimal(15, 2)
+  outstanding_balance Decimal       @db.Decimal(15, 2)
+  days_overdue        Int           @default(0)
+  validated_by_imf    Boolean       @default(false)
+  disbursed_at        DateTime?     @db.Timestamp(6)
+  next_due_date       DateTime?     @db.Date
+  imf_validated_by    String?       @db.Uuid
+  purpose             String?       @db.VarChar(500)
+  rejection_reason    String?       @db.VarChar(500)
+  created_at          DateTime      @default(now()) @db.Timestamp(6)
+  investments         Investment[]
+  borrowers           Borrower      @relation(fields: [borrower_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  imf_staff           ImfStaff?     @relation(fields: [imf_validated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([borrower_id], map: "idx_loans_borrower_id")
+  @@index([days_overdue], map: "idx_loans_days_overdue")
+  @@index([status], map: "idx_loans_status")
+  @@map("loans")
+}
+
+model Investment {
+  id                         String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  investor_id                String                    @db.Uuid
+  loan_id                    String                    @db.Uuid
+  amount                     Decimal                   @db.Decimal(15, 2)
+  currency                   currency_code             @default(XOF)
+  expected_return            Decimal                   @db.Decimal(15, 2)
+  actual_return              Decimal                   @default(0.00) @db.Decimal(15, 2)
+  status                     investment_status         @default(ACTIVE)
+  is_guaranteed              Boolean                   @default(true)
+  guarantee_tier             Int                       @default(1)
+  maturity_date              DateTime                  @db.Date
+  guarantee_fund_investments GuaranteeFundInvestment[]
+  investors                  Investor                  @relation(fields: [investor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  loans                      Loan                      @relation(fields: [loan_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([investor_id], map: "idx_investments_investor_id")
+  @@index([loan_id], map: "idx_investments_loan_id")
+  @@index([status], map: "idx_investments_status")
+  @@map("investments")
+}
+
+model Transaction {
+  id                      String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type                    transaction_type
+  amount                  Decimal            @db.Decimal(15, 2)
+  currency                currency_code      @default(XOF)
+  status                  transaction_status @default(PENDING)
+  payment_gateway         payment_gateway?
+  momo_reference          String?            @unique @db.VarChar(100)
+  momo_provider           momo_provider?
+  provider_transaction_id String?            @db.VarChar(191)
+  provider_status         String?            @db.VarChar(100)
+  provider_payload        Json?              @db.JsonB
+  initiated_at            DateTime           @default(now()) @db.Timestamp(6)
+  confirmed_at            DateTime?          @db.Timestamp(6)
+  reconciled_at           DateTime?          @db.Timestamp(6)
+  webhook_received_at     DateTime?          @db.Timestamp(6)
+  signature_verified      Boolean            @default(false)
+  is_reconciled           Boolean            @default(false)
+  failure_reason          String?            @db.VarChar(300)
+  created_by              String             @db.Uuid
+  users                   User               @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([created_by], map: "idx_transactions_created_by")
+  @@index([payment_gateway], map: "idx_transactions_payment_gateway")
+  @@index([provider_transaction_id], map: "idx_transactions_provider_transaction_id")
+  @@index([momo_reference], map: "idx_transactions_momo_reference")
+  @@index([status], map: "idx_transactions_status")
+  @@index([type], map: "idx_transactions_type")
+  @@map("transactions")
+}
+
+model TontineGroup {
+  id                   String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String          @db.VarChar(150)
+  leader_user_id       String          @db.Uuid
+  leader_phone         String          @db.VarChar(20)
+  member_count         Int             @default(1)
+  monthly_contribution Decimal         @db.Decimal(15, 2)
+  completed_cycles     Int             @default(0)
+  status               tontine_status  @default(PENDING)
+  tontine_cycles       TontineCycle[]
+  borrowers            Borrower        @relation(fields: [leader_user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tontine_members      TontineMember[]
+
+  @@index([status], map: "idx_tontine_groups_status")
+  @@map("tontine_groups")
+}
+
+model TontineMember {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  group_id       String       @db.Uuid
+  borrower_id    String       @db.Uuid
+  joined_at      DateTime     @default(now()) @db.Timestamp(6)
+  borrowers      Borrower     @relation(fields: [borrower_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tontine_groups TontineGroup @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([group_id, borrower_id])
+  @@map("tontine_members")
+}
+
+model TontineCycle {
+  id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  group_id          String       @db.Uuid
+  cycle_number      Int
+  start_date        DateTime     @db.Date
+  end_date          DateTime     @db.Date
+  total_collected   Decimal      @default(0.00) @db.Decimal(15, 2)
+  is_complete       Boolean      @default(false)
+  beneficiary_id    String       @db.Uuid
+  members_paid      Int          @default(0)
+  members_defaulted Int          @default(0)
+  borrowers         Borrower     @relation(fields: [beneficiary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tontine_groups    TontineGroup @relation(fields: [group_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([group_id, cycle_number])
+  @@index([group_id], map: "idx_tontine_cycles_group_id")
+  @@map("tontine_cycles")
+}
+
+model GuaranteeFund {
+  id                         String                    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  total_capital              Decimal                   @default(0.00) @db.Decimal(15, 2)
+  active_portfolio_value     Decimal                   @default(0.00) @db.Decimal(15, 2)
+  coverage_ratio             Decimal                   @default(0.00) @db.Decimal(5, 4)
+  min_threshold              Decimal                   @default(0.0300) @db.Decimal(5, 4)
+  target_threshold           Decimal                   @default(0.0500) @db.Decimal(5, 4)
+  suspension_active          Boolean                   @default(false)
+  last_reconstitution_date   DateTime?                 @db.Date
+  guarantee_fund_investments GuaranteeFundInvestment[]
+
+  @@map("guarantee_fund")
+}
+
+model GuaranteeFundInvestment {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fund_id        String        @db.Uuid
+  investment_id  String        @db.Uuid
+  covered_amount Decimal       @db.Decimal(15, 2)
+  activated_at   DateTime?     @db.Timestamp(6)
+  is_activated   Boolean       @default(false)
+  guarantee_fund GuaranteeFund @relation(fields: [fund_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  investments    Investment    @relation(fields: [investment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([fund_id, investment_id])
+  @@map("guarantee_fund_investments")
+}
+
+model ScoringEngine {
+  id                  String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  momo_weight         Decimal @default(0.40) @db.Decimal(3, 2)
+  tontine_weight      Decimal @default(0.35) @db.Decimal(3, 2)
+  imf_weight          Decimal @default(0.25) @db.Decimal(3, 2)
+  warning_signal_days Int     @default(45)
+
+  @@map("scoring_engine")
+}
+
+model BorrowerScore {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  borrower_id   String   @db.Uuid
+  momo_score    Decimal  @db.Decimal(5, 2)
+  tontine_score Decimal  @db.Decimal(5, 2)
+  imf_score     Decimal  @db.Decimal(5, 2)
+  hybrid_score  Decimal  @db.Decimal(5, 2)
+  computed_at   DateTime @default(now()) @db.Timestamp(6)
+  borrowers     Borrower @relation(fields: [borrower_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("borrower_scores")
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum admin_role {
+  SUPER_ADMIN
+  OPERATIONS
+  COMPLIANCE
+  SUPPORT
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum investment_status {
+  ACTIVE
+  COMPLETED
+  DEFAULTED
+  GUARANTEED
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum investor_type {
+  RETAIL
+  INSTITUTIONAL
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum kyc_status {
+  NOT_STARTED
+  SESSION1_DONE
+  SESSION2_DONE
+  VALIDATED
+  REJECTED
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum loan_status {
+  PENDING_IMF
+  FUNDING
+  ACTIVE
+  OVERDUE
+  GUARANTEE_ACTIVATED
+  REPURCHASED
+  REPAID
+  CANCELLED
+  RESTRUCTURED
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum momo_provider {
+  MTN_MOMO
+  MOOV_FLOOZ
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum risk_profile {
+  CONSERVATIVE
+  BALANCED
+  DYNAMIC
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum tontine_status {
+  PENDING
+  ACTIVE
+  COMPLETED
+  SUSPENDED
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum transaction_status {
+  PENDING
+  CONFIRMED
+  RECONCILED
+  FAILED
+  PHANTOM_DETECTED
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum transaction_type {
+  INVESTOR_DEPOSIT
+  INVESTOR_WITHDRAWAL
+  LOAN_DISBURSEMENT
+  LOAN_REPAYMENT
+  PLATFORM_COMMISSION
+  GUARANTEE_ACTIVATION
+  IMF_REPURCHASE
+  AGENT_COMMISSION
+}
+
+enum payment_gateway {
+  FEDAPAY
+  KKIAPAY
+}
+
+enum currency_code {
+  XOF
+  USD
+  EUR
+  NGN
+}
+
+/// This enum is commented in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+enum user_status {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  BLOCKED
+}

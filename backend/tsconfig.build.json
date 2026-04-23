@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "ignoreDeprecations": "5.0", "tsBuildInfoFile": "./dist/.tsbuildinfo" },
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts", "src/generated/**/*"]
+}
