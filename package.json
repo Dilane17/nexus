@@ -1,19 +1,14 @@
 {
-  "name": "nexus",
+  "name": "nexus-monorepo",
   "private": true,
   "version": "0.0.0",
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
+  "description": "Nexus - Backend NestJS + Frontend Mobile",
   "scripts": {
-    "bootstrap": "npm install",
-    "start:backend": "npm --workspace backend run start:dev",
-    "build:backend": "npm --workspace backend run build",
-    "lint:backend": "npm --workspace backend run lint",
-    "test:backend": "npm --workspace backend run test",
-    "prisma:generate": "npm --workspace backend run prisma:generate",
-    "start:frontend": "npm --workspace frontend run start",
-    "lint:frontend": "npm --workspace frontend run lint"
+    "backend:install": "cd backend && npm install",
+    "backend:start": "cd backend && npm run start:dev",
+    "backend:build": "cd backend && npm run build",
+    "backend:test": "cd backend && npm run test",
+    "backend:lint": "cd backend && npm run lint",
+    "backend:prisma": "cd backend && npm run prisma:generate"
   }
 }
