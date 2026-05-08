@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LoansService } from './loans.service';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { NotificationService } from '@shared/notifications/notification.service';
+import { GuaranteeFundService } from '@modules/guarantee-fund/guarantee-fund.service';
 import { ForbiddenException, BadRequestException } from '@nestjs/common';
 
 // ── Mock PrismaService ────────────────────────────────────────────────────────
@@ -9,7 +10,13 @@ import { ForbiddenException, BadRequestException } from '@nestjs/common';
 const prismaMock = {
   borrower: { findUnique: jest.fn(), findUniqueOrThrow: jest.fn() },
   user: { findUnique: jest.fn() },
-  loan: { count: jest.fn(), create: jest.fn(), findMany: jest.fn(), findUnique: jest.fn(), update: jest.fn() },
+  loan: {
+    count: jest.fn(),
+    create: jest.fn(),
+    findMany: jest.fn(),
+    findUnique: jest.fn(),
+    update: jest.fn(),
+  },
   borrowerScore: { create: jest.fn() },
   scoringEngine: { findFirst: jest.fn() },
   imfStaff: { findUnique: jest.fn() },
@@ -33,6 +40,10 @@ describe('LoansService', () => {
             notifyLoanRepaymentReceived: jest.fn(),
           },
         },
+        {
+          provide: GuaranteeFundService,
+          useValue: { activateGuarantee: jest.fn() },
+        },
       ],
     }).compile();
 
@@ -45,8 +56,15 @@ describe('LoansService', () => {
   describe('calculateMonthlyInstallment (private)', () => {
     // Accès via cast any pour tester la méthode privée
     const calc = (amount: number, rate: number, months: number) =>
-      (service as unknown as { calculateMonthlyInstallment: (a: number, r: number, m: number) => number })
-        .calculateMonthlyInstallment(amount, rate, months);
+      (
+        service as unknown as {
+          calculateMonthlyInstallment: (
+            a: number,
+            r: number,
+            m: number,
+          ) => number;
+        }
+      ).calculateMonthlyInstallment(amount, rate, months);
 
     it('retourne amount/months si taux = 0', () => {
       expect(calc(120000, 0, 12)).toBeCloseTo(10000, 2);
@@ -77,20 +95,30 @@ describe('LoansService', () => {
   // ── createLoan — garde KYC ───────────────────────────────────────────────────
 
   describe('createLoan', () => {
-    it('lève ForbiddenException si l\'utilisateur n\'est pas un emprunteur', async () => {
+    it("lève ForbiddenException si l'utilisateur n'est pas un emprunteur", async () => {
       prismaMock.borrower.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.createLoan('user-id', { amount: 50000, duration_months: 6, purpose: 'Test achat stock' }),
+        service.createLoan('user-id', {
+          amount: 50000,
+          duration_months: 6,
+          purpose: 'Test achat stock',
+        }),
       ).rejects.toThrow(ForbiddenException);
     });
 
-    it('lève ForbiddenException si le KYC n\'est pas VALIDATED', async () => {
+    it("lève ForbiddenException si le KYC n'est pas VALIDATED", async () => {
       prismaMock.borrower.findUnique.mockResolvedValue({ id: 'borrower-id' });
-      prismaMock.user.findUnique.mockResolvedValue({ kyc_status: 'SESSION1_DONE' });
+      prismaMock.user.findUnique.mockResolvedValue({
+        kyc_status: 'SESSION1_DONE',
+      });
 
       await expect(
-        service.createLoan('user-id', { amount: 50000, duration_months: 6, purpose: 'Test achat stock' }),
+        service.createLoan('user-id', {
+          amount: 50000,
+          duration_months: 6,
+          purpose: 'Test achat stock',
+        }),
       ).rejects.toThrow(ForbiddenException);
     });
 
@@ -100,7 +128,11 @@ describe('LoansService', () => {
       prismaMock.loan.count.mockResolvedValue(1);
 
       await expect(
-        service.createLoan('user-id', { amount: 50000, duration_months: 6, purpose: 'Test achat stock' }),
+        service.createLoan('user-id', {
+          amount: 50000,
+          duration_months: 6,
+          purpose: 'Test achat stock',
+        }),
       ).rejects.toThrow(BadRequestException);
     });
   });
@@ -108,7 +140,7 @@ describe('LoansService', () => {
   // ── validateLoan — garde IMF ─────────────────────────────────────────────────
 
   describe('validateLoan', () => {
-    it('lève ForbiddenException si l\'appelant n\'est pas IMF Staff', async () => {
+    it("lève ForbiddenException si l'appelant n'est pas IMF Staff", async () => {
       prismaMock.imfStaff.findUnique.mockResolvedValue(null);
 
       await expect(
@@ -116,7 +148,7 @@ describe('LoansService', () => {
       ).rejects.toThrow(ForbiddenException);
     });
 
-    it('lève BadRequestException si le prêt n\'est pas en PENDING_IMF', async () => {
+    it("lève BadRequestException si le prêt n'est pas en PENDING_IMF", async () => {
       prismaMock.imfStaff.findUnique.mockResolvedValue({ id: 'imf-id' });
       prismaMock.loan.findUnique.mockResolvedValue({
         id: 'loan-id',

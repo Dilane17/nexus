@@ -33,6 +33,11 @@ import {
   UpdateUserStatusDtoDoc,
 } from './dto/update-user-status.dto';
 import type { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import {
+  updateScoringEngineSchema,
+  UpdateScoringEngineDtoDoc,
+} from './dto/update-scoring-engine.dto';
+import type { UpdateScoringEngineDto } from './dto/update-scoring-engine.dto';
 
 @ApiTags('Admin')
 @ApiBearerAuth('JWT-auth')
@@ -45,7 +50,9 @@ export class AdminController {
   // ── Dashboard ─────────────────────────────────────────────────────────────
 
   @Get('dashboard')
-  @ApiOperation({ summary: '[Admin] Tableau de bord global — NPL, utilisateurs, transactions' })
+  @ApiOperation({
+    summary: '[Admin] Tableau de bord global — NPL, utilisateurs, transactions',
+  })
   async getDashboard() {
     const data = await this.adminService.getDashboard();
     return { success: true, data, message: 'Dashboard récupéré' };
@@ -54,13 +61,23 @@ export class AdminController {
   // ── Rapport BCEAO ─────────────────────────────────────────────────────────
 
   @Get('reports/bceao')
-  @ApiOperation({ summary: '[Admin] Rapport BCEAO — encours, NPL, réconciliation, fonds de garantie' })
-  @ApiQuery({ name: 'from', required: true, example: '2026-01-01', description: 'Date de début (YYYY-MM-DD)' })
-  @ApiQuery({ name: 'to', required: true, example: '2026-04-30', description: 'Date de fin (YYYY-MM-DD)' })
-  async getBceaoReport(
-    @Query('from') from: string,
-    @Query('to') to: string,
-  ) {
+  @ApiOperation({
+    summary:
+      '[Admin] Rapport BCEAO — encours, NPL, réconciliation, fonds de garantie',
+  })
+  @ApiQuery({
+    name: 'from',
+    required: true,
+    example: '2026-01-01',
+    description: 'Date de début (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'to',
+    required: true,
+    example: '2026-04-30',
+    description: 'Date de fin (YYYY-MM-DD)',
+  })
+  async getBceaoReport(@Query('from') from: string, @Query('to') to: string) {
     const data = await this.adminService.getBceaoReport(from, to);
     return { success: true, data, message: 'Rapport BCEAO généré' };
   }
@@ -80,21 +97,40 @@ export class AdminController {
   @ApiOperation({ summary: '[Admin] Lister tous les utilisateurs' })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 20 })
-  @ApiQuery({ name: 'status', required: false, enum: ['PENDING', 'ACTIVE', 'SUSPENDED', 'BLOCKED'] })
-  @ApiQuery({ name: 'kyc_status', required: false, enum: ['NOT_STARTED', 'SESSION1_DONE', 'SESSION2_DONE', 'VALIDATED', 'REJECTED'] })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['PENDING', 'ACTIVE', 'SUSPENDED', 'BLOCKED'],
+  })
+  @ApiQuery({
+    name: 'kyc_status',
+    required: false,
+    enum: [
+      'NOT_STARTED',
+      'SESSION1_DONE',
+      'SESSION2_DONE',
+      'VALIDATED',
+      'REJECTED',
+    ],
+  })
   async listUsers(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('status') status?: string,
     @Query('kyc_status') kyc_status?: string,
   ) {
-    const data = await this.adminService.listUsers(page, limit, status, kyc_status);
+    const data = await this.adminService.listUsers(
+      page,
+      limit,
+      status,
+      kyc_status,
+    );
     return { success: true, data, message: 'Utilisateurs récupérés' };
   }
 
   @Get('users/:id')
-  @ApiOperation({ summary: '[Admin] Fiche complète d\'un utilisateur' })
-  @ApiParam({ name: 'id', description: 'UUID de l\'utilisateur' })
+  @ApiOperation({ summary: "[Admin] Fiche complète d'un utilisateur" })
+  @ApiParam({ name: 'id', description: "UUID de l'utilisateur" })
   async getUserById(@Param('id', ParseUUIDPipe) userId: string) {
     const data = await this.adminService.getUserById(userId);
     return { success: true, data, message: 'Utilisateur récupéré' };
@@ -102,16 +138,61 @@ export class AdminController {
 
   @Patch('users/:id/status')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '[Admin] Bloquer, suspendre ou réactiver un compte' })
-  @ApiParam({ name: 'id', description: 'UUID de l\'utilisateur' })
+  @ApiOperation({
+    summary: '[Admin] Bloquer, suspendre ou réactiver un compte',
+  })
+  @ApiParam({ name: 'id', description: "UUID de l'utilisateur" })
   @ApiBody({ type: UpdateUserStatusDtoDoc })
   async updateUserStatus(
     @CurrentUser() admin: JwtPayload,
     @Param('id', ParseUUIDPipe) targetUserId: string,
-    @Body(new ZodValidationPipe(updateUserStatusSchema)) dto: UpdateUserStatusDto,
+    @Body(new ZodValidationPipe(updateUserStatusSchema))
+    dto: UpdateUserStatusDto,
   ) {
-    const data = await this.adminService.updateUserStatus(admin.sub, targetUserId, dto);
-    const action = dto.status === 'ACTIVE' ? 'réactivé' : dto.status === 'SUSPENDED' ? 'suspendu' : 'bloqué';
+    const data = await this.adminService.updateUserStatus(
+      admin.sub,
+      targetUserId,
+      dto,
+    );
+    const action =
+      dto.status === 'ACTIVE'
+        ? 'réactivé'
+        : dto.status === 'SUSPENDED'
+          ? 'suspendu'
+          : 'bloqué';
     return { success: true, data, message: `Compte utilisateur ${action}` };
+  }
+
+  // ── Scoring Engine ───────────────────────────────────────────────────────────
+
+  @Get('scoring-engine')
+  @ApiOperation({
+    summary: '[Admin] Lire la configuration du moteur de scoring',
+  })
+  async getScoringEngine() {
+    const data = await this.adminService.getScoringEngineConfig();
+    return {
+      success: true,
+      data,
+      message: 'Configuration du scoring récupérée',
+    };
+  }
+
+  @Patch('scoring-engine')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '[Admin] Modifier les poids et paramètres du scoring',
+  })
+  @ApiBody({ type: UpdateScoringEngineDtoDoc })
+  async updateScoringEngine(
+    @Body(new ZodValidationPipe(updateScoringEngineSchema))
+    dto: UpdateScoringEngineDto,
+  ) {
+    const data = await this.adminService.updateScoringEngineConfig(dto);
+    return {
+      success: true,
+      data,
+      message: 'Configuration du scoring mise à jour',
+    };
   }
 }

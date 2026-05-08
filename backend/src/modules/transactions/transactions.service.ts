@@ -15,6 +15,7 @@ import type {
 } from '@generated/prisma';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { NotificationService } from '@shared/notifications/notification.service';
+import { WalletService } from '@modules/wallet/wallet.service';
 import type { DepositDto } from './dto/deposit.dto';
 import type { WithdrawalDto } from './dto/withdrawal.dto';
 import type {
@@ -98,6 +99,7 @@ export class TransactionsService {
     private readonly config: ConfigService,
     private readonly notifications: NotificationService,
     private readonly gatewayRouter: PaymentGatewayRouterService,
+    private readonly walletService: WalletService,
   ) {}
 
   async initiateDeposit(
@@ -341,8 +343,7 @@ export class TransactionsService {
       await this.prisma.transaction.update({
         where: { id: transaction.id },
         data: {
-          provider_transaction_id:
-            event.providerTransactionId ?? undefined,
+          provider_transaction_id: event.providerTransactionId ?? undefined,
           provider_status: event.providerStatus,
           provider_payload: this.asJson(event.payload),
           webhook_received_at: new Date(),
@@ -358,8 +359,7 @@ export class TransactionsService {
           where: { id: transaction.id },
           data: {
             status: 'CONFIRMED',
-            provider_transaction_id:
-              event.providerTransactionId ?? undefined,
+            provider_transaction_id: event.providerTransactionId ?? undefined,
             provider_status: event.providerStatus,
             provider_payload: this.asJson(event.payload),
             confirmed_at: new Date(),
@@ -375,6 +375,12 @@ export class TransactionsService {
               wallet_balance: { increment: Number(transaction.amount) },
             },
           });
+        }
+
+        if (transaction.type === 'INVESTOR_DEPOSIT') {
+          await this.walletService.updateEscrowOnDeposit(
+            Number(transaction.amount),
+          );
         }
       });
 
@@ -401,7 +407,8 @@ export class TransactionsService {
           provider_transaction_id: event.providerTransactionId ?? undefined,
           provider_status: event.providerStatus,
           provider_payload: this.asJson(event.payload),
-          failure_reason: event.failureReason ?? 'Échec signalé par le provider',
+          failure_reason:
+            event.failureReason ?? 'Échec signalé par le provider',
           webhook_received_at: new Date(),
           signature_verified: true,
         },
@@ -518,8 +525,8 @@ export class TransactionsService {
     id: string;
     firstName: string;
     lastName: string;
-    email: string | null;
-    phone: string;
+    email: string;
+    phone: string | null;
     wallet_balance?: { toString(): string };
   }> {
     const user = await this.prisma.user.findUnique({
@@ -544,7 +551,9 @@ export class TransactionsService {
         });
 
     if (!investor || !user) {
-      throw new ForbiddenException('Seuls les investisseurs peuvent effectuer cette action');
+      throw new ForbiddenException(
+        'Seuls les investisseurs peuvent effectuer cette action',
+      );
     }
 
     return {
@@ -563,8 +572,8 @@ export class TransactionsService {
     user: {
       firstName: string;
       lastName: string;
-      email: string | null;
-      phone: string;
+      email: string;
+      phone: string | null;
     },
     description: string,
     gateway: payment_gateway,
@@ -592,7 +601,7 @@ export class TransactionsService {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        phone: phone || user.phone,
+        phone: phone || user.phone || '',
         country: 'BJ',
       },
     };

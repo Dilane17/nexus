@@ -10,13 +10,13 @@ import {
 import { JwtService, type JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import axios from 'axios';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { MailService } from '@shared/mail/mail.service';
-import { SmsService } from '@shared/sms/sms.service';
 import type { LoginDto } from './dto/login.dto';
 import type { RegisterDto } from './dto/register.dto';
 import type { UpdateProfileDto } from './dto/update-profile.dto';
-import type { VerifyPhoneDto, VerifyEmailDto } from './dto/verify-otp.dto';
+import type { VerifyEmailDto } from './dto/verify-otp.dto';
 import type { ResendOtpDto } from './dto/resend-otp.dto';
 import type { ForgotPasswordDto } from './dto/forgot-password.dto';
 import type { ResetPasswordDto } from './dto/reset-password.dto';
@@ -30,19 +30,17 @@ import type {
   GoogleLoginResult,
 } from './auth.types';
 
-// Sélecteur partagé pour les champs utilisateur publics
 const USER_PUBLIC_SELECT = {
   id: true,
   firstName: true,
   lastName: true,
-  phone: true,
   email: true,
+  phone: true,
   city: true,
   district: true,
   avatar: true,
   status: true,
   kyc_status: true,
-  isPhoneVerified: true,
   isEmailVerified: true,
 } as const;
 
@@ -55,19 +53,18 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
     private readonly mailService: MailService,
-    private readonly smsService: SmsService,
   ) {}
 
   // ── Register ───────────────────────────────────────────────────────────────
 
   async register(dto: RegisterDto): Promise<{ message: string }> {
     const existing = await this.prisma.user.findUnique({
-      where: { phone: dto.phone },
+      where: { email: dto.email },
       select: { id: true },
     });
 
     if (existing) {
-      throw new ConflictException('Ce numéro de téléphone est déjà utilisé');
+      throw new ConflictException('Cet email est déjà utilisé');
     }
 
     const hashed = await bcrypt.hash(dto.password, 10);
@@ -77,49 +74,21 @@ export class AuthService {
         firstName: dto.firstName,
         lastName: dto.lastName,
         phone: dto.phone,
+        email: dto.email,
         password: hashed,
         city: dto.city,
         district: dto.district,
         status: 'PENDING',
-        isPhoneVerified: false,
+        isEmailVerified: false,
       },
-      select: { id: true, firstName: true, phone: true },
+      select: { id: true, firstName: true, email: true },
     });
 
     const code = this.generateOtp();
-    await this.saveOtp(user.id, code, 'PHONE_VERIFICATION');
-    await this.smsService.sendOtpSms(user.phone, user.firstName, code);
+    await this.saveOtp(user.id, code, 'EMAIL_VERIFICATION');
+    await this.mailService.sendOtpEmail(user.email, user.firstName, code);
 
-    return { message: `Code envoyé au ${dto.phone}` };
-  }
-
-  // ── Verify phone OTP ───────────────────────────────────────────────────────
-
-  async verifyPhone(dto: VerifyPhoneDto): Promise<AuthTokens> {
-    const user = await this.prisma.user.findUnique({
-      where: { phone: dto.phone },
-      select: { id: true, phone: true, isPhoneVerified: true },
-    });
-
-    if (!user) {
-      throw new NotFoundException('Utilisateur introuvable');
-    }
-
-    if (user.isPhoneVerified) {
-      throw new BadRequestException('Ce numéro est déjà vérifié');
-    }
-
-    const valid = await this.verifyOtp(user.id, dto.code, 'PHONE_VERIFICATION');
-    if (!valid) {
-      throw new UnauthorizedException('Code invalide ou expiré');
-    }
-
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { isPhoneVerified: true, status: 'ACTIVE' },
-    });
-
-    return this.buildAuthResponse(user.id, user.phone);
+    return { message: `Code de vérification envoyé à ${dto.email}` };
   }
 
   // ── Verify email OTP ───────────────────────────────────────────────────────
@@ -127,7 +96,7 @@ export class AuthService {
   async verifyEmail(dto: VerifyEmailDto): Promise<AuthTokens> {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
-      select: { id: true, phone: true, isEmailVerified: true },
+      select: { id: true, email: true, isEmailVerified: true },
     });
 
     if (!user) {
@@ -148,25 +117,25 @@ export class AuthService {
       data: { isEmailVerified: true, status: 'ACTIVE' },
     });
 
-    return this.buildAuthResponse(user.id, user.phone);
+    return this.buildAuthResponse(user.id, user.email);
   }
 
   // ── Login ──────────────────────────────────────────────────────────────────
 
   async login(dto: LoginDto): Promise<AuthTokens> {
     const user = await this.prisma.user.findUnique({
-      where: { phone: dto.phone },
+      where: { email: dto.email },
       select: {
         id: true,
-        phone: true,
+        email: true,
         status: true,
-        isPhoneVerified: true,
+        isEmailVerified: true,
         password: true,
       },
     });
 
     if (!user || !user.password) {
-      throw new UnauthorizedException('Téléphone ou mot de passe incorrect');
+      throw new UnauthorizedException('Email ou mot de passe incorrect');
     }
 
     if (user.status === 'BLOCKED') {
@@ -178,16 +147,16 @@ export class AuthService {
 
     const passwordMatch = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatch) {
-      throw new UnauthorizedException('Téléphone ou mot de passe incorrect');
+      throw new UnauthorizedException('Email ou mot de passe incorrect');
     }
 
-    if (!user.isPhoneVerified) {
+    if (!user.isEmailVerified) {
       throw new UnauthorizedException(
-        "Numéro non vérifié. Vérifiez le code SMS reçu lors de l'inscription.",
+        "Email non vérifié. Vérifiez le code reçu lors de l'inscription.",
       );
     }
 
-    return this.buildAuthResponse(user.id, user.phone);
+    return this.buildAuthResponse(user.id, user.email);
   }
 
   // ── Google OAuth ───────────────────────────────────────────────────────────
@@ -197,14 +166,12 @@ export class AuthService {
       throw new BadRequestException("L'email Google est requis");
     }
 
-    // Chercher par googleId ou email
     let user = await this.prisma.user.findFirst({
       where: {
         OR: [{ googleId: profile.googleId }, { email: profile.email }],
       },
       select: {
         id: true,
-        phone: true,
         email: true,
         firstName: true,
         isEmailVerified: true,
@@ -214,7 +181,6 @@ export class AuthService {
     });
 
     if (!user) {
-      // Nouveau user — créer avec status PENDING
       user = await this.prisma.user.create({
         data: {
           firstName: profile.firstName,
@@ -222,14 +188,11 @@ export class AuthService {
           email: profile.email,
           googleId: profile.googleId,
           avatar: profile.avatar,
-          phone: `+229_google_${profile.googleId}`, // placeholder temporaire
           status: 'PENDING',
           isEmailVerified: false,
-          isPhoneVerified: false,
         },
         select: {
           id: true,
-          phone: true,
           email: true,
           firstName: true,
           isEmailVerified: true,
@@ -238,223 +201,141 @@ export class AuthService {
         },
       });
     } else if (!user.googleId) {
-      // User existant via email, lier le googleId
       await this.prisma.user.update({
         where: { id: user.id },
         data: { googleId: profile.googleId, avatar: profile.avatar },
       });
     }
 
-    // Si déjà vérifié, retourner les tokens directement
     if (user.isEmailVerified && user.status === 'ACTIVE') {
-      const tokens = await this.buildAuthResponse(user.id, user.phone);
+      const tokens = await this.buildAuthResponse(user.id, user.email);
       return { needsVerification: false, tokens };
     }
 
-    // Nouveau user ou non vérifié → envoyer OTP email
     const code = this.generateOtp();
     await this.saveOtp(user.id, code, 'EMAIL_VERIFICATION');
-
-    if (user.email) {
-      await this.mailService.sendOtpEmail(user.email, user.firstName, code);
-    }
+    await this.mailService.sendOtpEmail(user.email, user.firstName, code);
 
     return {
       needsVerification: true,
-      message: `Code de vérification envoyé à ${user.email ?? ''}`,
+      message: `Code de vérification envoyé à ${user.email}`,
     };
+  }
+
+  async googleMobileLogin(idToken: string): Promise<GoogleLoginResult> {
+    const { data } = await axios.get<{
+      sub?: string;
+      email?: string;
+      given_name?: string;
+      family_name?: string;
+      picture?: string;
+      email_verified?: string | boolean;
+    }>('https://oauth2.googleapis.com/tokeninfo', {
+      params: { id_token: idToken },
+    });
+
+    if (!data.sub || !data.email) {
+      throw new UnauthorizedException('Token Google invalide');
+    }
+
+    const isEmailVerified =
+      data.email_verified === true || data.email_verified === 'true';
+
+    if (!isEmailVerified) {
+      throw new UnauthorizedException('Email Google non vérifié');
+    }
+
+    return this.googleLogin({
+      googleId: data.sub,
+      email: data.email,
+      firstName: data.given_name ?? 'Utilisateur',
+      lastName: data.family_name ?? 'Google',
+      avatar: data.picture ?? null,
+    });
   }
 
   // ── Forgot Password ────────────────────────────────────────────────────────
 
   async forgotPassword(dto: ForgotPasswordDto): Promise<{ message: string }> {
-    const GENERIC_MESSAGE = 'Si ce contact existe, un code a été envoyé';
+    const GENERIC_MESSAGE = 'Si cet email existe, un code a été envoyé';
 
-    if (dto.phone) {
-      const user = await this.prisma.user.findUnique({
-        where: { phone: dto.phone },
-        select: { id: true, firstName: true, phone: true, status: true },
-      });
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+      select: { id: true, firstName: true, email: true, status: true },
+    });
 
-      if (!user) {
-        return { message: GENERIC_MESSAGE };
-      }
-
-      if (user.status === 'BLOCKED') {
-        throw new ForbiddenException('Compte bloqué. Contactez le support.');
-      }
-
-      const code = this.generateOtp();
-      await this.saveOtp(user.id, code, 'PASSWORD_RESET');
-      await this.smsService.sendOtpSms(user.phone, user.firstName, code);
-
+    if (!user) {
       return { message: GENERIC_MESSAGE };
     }
 
-    if (dto.email) {
-      const user = await this.prisma.user.findUnique({
-        where: { email: dto.email },
-        select: {
-          id: true,
-          firstName: true,
-          email: true,
-          status: true,
-          googleId: true,
-        },
-      });
-
-      if (!user) {
-        return { message: GENERIC_MESSAGE };
-      }
-
-      if (user.status === 'BLOCKED') {
-        throw new ForbiddenException('Compte bloqué. Contactez le support.');
-      }
-
-      if (!user.googleId) {
-        throw new BadRequestException(
-          "Cet email n'est pas associé à un compte Google",
-        );
-      }
-
-      const code = this.generateOtp();
-      await this.saveOtp(user.id, code, 'PASSWORD_RESET');
-
-      if (user.email) {
-        await this.mailService.sendOtpEmail(user.email, user.firstName, code);
-      }
-
-      return { message: GENERIC_MESSAGE };
+    if (user.status === 'BLOCKED') {
+      throw new ForbiddenException('Compte bloqué. Contactez le support.');
     }
 
-    throw new BadRequestException('phone ou email requis');
+    const code = this.generateOtp();
+    await this.saveOtp(user.id, code, 'PASSWORD_RESET');
+    await this.mailService.sendOtpEmail(user.email, user.firstName, code);
+
+    return { message: GENERIC_MESSAGE };
   }
 
   // ── Reset Password ─────────────────────────────────────────────────────────
 
   async resetPassword(dto: ResetPasswordDto): Promise<{ message: string }> {
-    if (dto.phone) {
-      const user = await this.prisma.user.findUnique({
-        where: { phone: dto.phone },
-        select: { id: true, phone: true },
-      });
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+      select: { id: true, email: true },
+    });
 
-      if (!user) {
-        throw new UnauthorizedException('Code invalide ou expiré');
-      }
-
-      const valid = await this.verifyOtp(user.id, dto.code, 'PASSWORD_RESET');
-      if (!valid) {
-        throw new UnauthorizedException('Code invalide ou expiré');
-      }
-
-      const hashed = await bcrypt.hash(dto.newPassword, 10);
-      await this.prisma.user.update({
-        where: { id: user.id },
-        data: { password: hashed, refresh_token: null },
-      });
-
-      this.logger.log(
-        `[AUTH] Mot de passe réinitialisé via téléphone pour ${dto.phone}`,
-      );
-      return { message: 'Mot de passe modifié. Reconnectez-vous.' };
+    if (!user) {
+      throw new UnauthorizedException('Code invalide ou expiré');
     }
 
-    if (dto.email) {
-      const user = await this.prisma.user.findUnique({
-        where: { email: dto.email },
-        select: { id: true, email: true },
-      });
-
-      if (!user) {
-        throw new UnauthorizedException('Code invalide ou expiré');
-      }
-
-      const valid = await this.verifyOtp(user.id, dto.code, 'PASSWORD_RESET');
-      if (!valid) {
-        throw new UnauthorizedException('Code invalide ou expiré');
-      }
-
-      const hashed = await bcrypt.hash(dto.newPassword, 10);
-      await this.prisma.user.update({
-        where: { id: user.id },
-        data: { password: hashed, refresh_token: null },
-      });
-
-      this.logger.log(
-        `[AUTH] Mot de passe défini via Google OAuth pour user ${user.email ?? ''}`,
-      );
-      return { message: 'Mot de passe modifié. Reconnectez-vous.' };
+    const valid = await this.verifyOtp(user.id, dto.code, 'PASSWORD_RESET');
+    if (!valid) {
+      throw new UnauthorizedException('Code invalide ou expiré');
     }
 
-    throw new BadRequestException('phone ou email requis');
+    const hashed = await bcrypt.hash(dto.newPassword, 10);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashed, refresh_token: null },
+    });
+
+    this.logger.log(`[AUTH] Mot de passe réinitialisé pour ${user.email}`);
+    return { message: 'Mot de passe modifié. Reconnectez-vous.' };
   }
 
   // ── Resend OTP ─────────────────────────────────────────────────────────────
 
   async resendOtp(dto: ResendOtpDto): Promise<{ message: string }> {
-    if (dto.phone) {
-      const user = await this.prisma.user.findUnique({
-        where: { phone: dto.phone },
-        select: {
-          id: true,
-          firstName: true,
-          phone: true,
-          isPhoneVerified: true,
-        },
-      });
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+      select: { id: true, firstName: true, email: true, isEmailVerified: true },
+    });
 
-      if (!user) throw new NotFoundException('Utilisateur introuvable');
-      if (user.isPhoneVerified) {
-        throw new BadRequestException('Ce numéro est déjà vérifié');
-      }
-
-      const code = this.generateOtp();
-      await this.saveOtp(user.id, code, 'PHONE_VERIFICATION');
-      await this.smsService.sendOtpSms(user.phone, user.firstName, code);
-
-      return { message: `Code renvoyé au ${dto.phone}` };
+    if (!user) throw new NotFoundException('Utilisateur introuvable');
+    if (user.isEmailVerified) {
+      throw new BadRequestException('Cet email est déjà vérifié');
     }
 
-    if (dto.email) {
-      const user = await this.prisma.user.findUnique({
-        where: { email: dto.email },
-        select: {
-          id: true,
-          firstName: true,
-          email: true,
-          isEmailVerified: true,
-        },
-      });
+    const code = this.generateOtp();
+    await this.saveOtp(user.id, code, 'EMAIL_VERIFICATION');
+    await this.mailService.sendOtpEmail(user.email, user.firstName, code);
 
-      if (!user) throw new NotFoundException('Utilisateur introuvable');
-      if (user.isEmailVerified) {
-        throw new BadRequestException('Cet email est déjà vérifié');
-      }
-
-      const code = this.generateOtp();
-      await this.saveOtp(user.id, code, 'EMAIL_VERIFICATION');
-
-      if (user.email) {
-        await this.mailService.sendOtpEmail(user.email, user.firstName, code);
-      }
-
-      return { message: `Code renvoyé à ${dto.email}` };
-    }
-
-    throw new BadRequestException('phone ou email requis');
+    return { message: `Code renvoyé à ${dto.email}` };
   }
 
   // ── Refresh ────────────────────────────────────────────────────────────────
 
   async refresh(
     userId: string,
-    phone: string,
+    email: string,
     rawRefreshToken: string,
   ): Promise<Pick<AuthTokens, 'accessToken' | 'refreshToken'>> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, phone: true, status: true, refresh_token: true },
+      select: { id: true, email: true, status: true, refresh_token: true },
     });
 
     if (!user || !user.refresh_token) {
@@ -482,7 +363,7 @@ export class AuthService {
     }
 
     const role = await this.determineUserRole(user.id);
-    const tokens = await this.generateTokens(user.id, phone, role);
+    const tokens = await this.generateTokens(user.id, email, role);
     await this.storeRefreshToken(user.id, tokens.refreshToken);
 
     return tokens;
@@ -518,7 +399,7 @@ export class AuthService {
     userId: string,
     dto: UpdateProfileDto,
   ): Promise<AuthUser> {
-    const user = await this.prisma.user.update({
+    return this.prisma.user.update({
       where: { id: userId },
       data: {
         ...(dto.firstName !== undefined && { firstName: dto.firstName }),
@@ -528,8 +409,6 @@ export class AuthService {
       },
       select: USER_PUBLIC_SELECT,
     });
-
-    return user;
   }
 
   // ── Change Password ────────────────────────────────────────────────────────
@@ -559,7 +438,6 @@ export class AuthService {
     }
 
     const hashed = await bcrypt.hash(dto.newPassword, 10);
-
     await this.prisma.user.update({
       where: { id: userId },
       data: { password: hashed, refresh_token: null },
@@ -580,7 +458,7 @@ export class AuthService {
     type: string,
   ): Promise<void> {
     const hashed = await bcrypt.hash(code, 10);
-    const expiry = new Date(Date.now() + 5 * 60 * 1000); // +5 minutes
+    const expiry = new Date(Date.now() + 5 * 60 * 1000);
 
     await this.prisma.user.update({
       where: { id: userId },
@@ -652,10 +530,10 @@ export class AuthService {
 
   private async generateTokens(
     userId: string,
-    phone: string,
+    email: string,
     role: UserRole,
   ): Promise<Pick<AuthTokens, 'accessToken' | 'refreshToken'>> {
-    const payload: JwtPayload = { sub: userId, phone, role };
+    const payload: JwtPayload = { sub: userId, email, role };
 
     type Expiry = JwtSignOptions['expiresIn'];
     const accessExpiry = (this.config.get('JWT_EXPIRES_IN') ?? '7d') as Expiry;
@@ -689,10 +567,10 @@ export class AuthService {
 
   private async buildAuthResponse(
     userId: string,
-    phone: string,
+    email: string,
   ): Promise<AuthTokens> {
     const role = await this.determineUserRole(userId);
-    const tokens = await this.generateTokens(userId, phone, role);
+    const tokens = await this.generateTokens(userId, email, role);
     await this.storeRefreshToken(userId, tokens.refreshToken);
     await this.prisma.user.update({
       where: { id: userId },

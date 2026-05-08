@@ -31,7 +31,7 @@ export interface PendingImfLoan {
     userId: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    phone: string | null;
     hybridScore: number | null;
   };
 }

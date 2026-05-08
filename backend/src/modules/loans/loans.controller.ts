@@ -62,6 +62,23 @@ export class LoansController {
     return { success: true, data, message: 'Prêts récupérés' };
   }
 
+  @Get('funding')
+  @ApiOperation({ summary: 'Marketplace investisseur — prêts ouverts au financement' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 20 })
+  async getFundingLoans(
+    @CurrentUser() user: JwtPayload,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+  ) {
+    const data = await this.loansService.getFundingLoans(user.sub, page, limit);
+    return {
+      success: true,
+      data,
+      message: 'Prêts ouverts au financement récupérés',
+    };
+  }
+
   @Get('pending-imf')
   @UseGuards(RolesGuard)
   @Roles('imf_staff', 'admin')

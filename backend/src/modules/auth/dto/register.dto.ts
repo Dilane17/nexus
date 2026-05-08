@@ -6,7 +6,9 @@ export const registerSchema = z.object({
   lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
   phone: z
     .string()
-    .regex(/^\+229\d{8,10}$/, 'Format invalide — ex: +22991000000'),
+    .regex(/^\+229\d{8}$/, 'Numéro de téléphone invalide')
+    .optional(),
+  email: z.string().email('Email invalide'),
   password: z
     .string()
     .min(8, 'Au moins 8 caractères')
@@ -25,10 +27,22 @@ export class RegisterDtoDoc {
   @ApiProperty({ example: 'Mensah', minLength: 2 })
   lastName!: string;
 
-  @ApiProperty({ example: '+22991000000', description: 'Format +229XXXXXXXX' })
-  phone!: string;
+  @ApiPropertyOptional({
+    example: '+22997000000',
+    description: 'Numéro de téléphone béninois',
+  })
+  phone?: string;
 
-  @ApiProperty({ example: 'Password1', description: 'Min 8 chars, 1 majuscule, 1 chiffre' })
+  @ApiProperty({
+    example: 'kofi.mensah@email.com',
+    description: 'Adresse email',
+  })
+  email!: string;
+
+  @ApiProperty({
+    example: 'Password1',
+    description: 'Min 8 chars, 1 majuscule, 1 chiffre',
+  })
   password!: string;
 
   @ApiPropertyOptional({ example: 'Cotonou' })

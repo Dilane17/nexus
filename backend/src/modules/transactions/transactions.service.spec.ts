@@ -9,6 +9,7 @@ import { NotificationService } from '@shared/notifications/notification.service'
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { TransactionsService } from './transactions.service';
 import { PaymentGatewayRouterService } from './gateways/payment-gateway-router.service';
+import { WalletService } from '@modules/wallet/wallet.service';
 
 const txMethods = {
   investor: { findUnique: jest.fn(), update: jest.fn() },
@@ -70,6 +71,10 @@ describe('TransactionsService', () => {
         { provide: ConfigService, useValue: configMock },
         { provide: NotificationService, useValue: notificationsMock },
         { provide: PaymentGatewayRouterService, useValue: routerMock },
+        {
+          provide: WalletService,
+          useValue: { updateEscrowOnDeposit: jest.fn() },
+        },
       ],
     }).compile();
 

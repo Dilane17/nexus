@@ -24,8 +24,8 @@ export interface PendingKycItem {
   userId: string;
   firstName: string;
   lastName: string;
-  phone: string;
-  email: string | null;
+  phone: string | null;
+  email: string;
   kycSubmittedAt: Date | null;
   kyc_status: string;
 }
@@ -68,14 +68,13 @@ export interface UserProfileResponse {
   id: string;
   firstName: string;
   lastName: string;
-  phone: string;
-  email: string | null;
+  phone: string | null;
+  email: string;
   city: string | null;
   district: string | null;
   avatar: string | null;
   status: string;
   kyc_status: string;
-  isPhoneVerified: boolean;
   isEmailVerified: boolean;
   role: UserRole;
   investorData: InvestorData | null;

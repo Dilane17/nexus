@@ -6,9 +6,10 @@ import { RolesGuard } from '@shared/guards/roles.guard';
 import { PaymentGatewayRouterService } from './gateways/payment-gateway-router.service';
 import { FedapayGatewayService } from './gateways/fedapay-gateway.service';
 import { KkiapayGatewayService } from './gateways/kkiapay-gateway.service';
+import { WalletModule } from '@modules/wallet/wallet.module';
 
 @Module({
-  imports: [PassportModule],
+  imports: [PassportModule, WalletModule],
   controllers: [TransactionsController],
   providers: [
     TransactionsService,

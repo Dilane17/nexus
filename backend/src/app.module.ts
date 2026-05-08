@@ -10,9 +10,13 @@ import { UsersModule } from './modules/users/users.module';
 import { FilesModule } from './modules/files/files.module';
 import { LoansModule } from './modules/loans/loans.module';
 import { InvestmentsModule } from './modules/investments/investments.module';
+import { GuaranteeFundModule } from './modules/guarantee-fund/guarantee-fund.module';
 import { TontineModule } from './modules/tontine/tontine.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
+import { WalletModule } from './modules/wallet/wallet.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { AgentsModule } from './modules/agents/agents.module';
+import { ImfStaffModule } from './modules/imf-staff/imf-staff.module';
 import { LoggerModule } from './modules/logger/logger.module';
 
 @Module({
@@ -28,9 +32,13 @@ import { LoggerModule } from './modules/logger/logger.module';
     FilesModule,
     LoansModule,
     InvestmentsModule,
+    GuaranteeFundModule,
     TontineModule,
     TransactionsModule,
+    WalletModule,
     AdminModule,
+    AgentsModule,
+    ImfStaffModule,
     LoggerModule,
   ],
   providers: [

@@ -7,6 +7,7 @@ import { PrismaService } from '@shared/prisma/prisma.service';
 import { AppCacheService } from '@shared/cache/app-cache.service';
 import type { user_status } from '@generated/prisma';
 import type { UpdateUserStatusDto } from './dto/update-user-status.dto';
+import type { UpdateScoringEngineDto } from './dto/update-scoring-engine.dto';
 import type {
   DashboardResponse,
   BceaoReportResponse,
@@ -42,7 +43,9 @@ export class AdminService {
       ] = await Promise.all([
         this.prisma.user.count(),
         this.prisma.user.count({ where: { kyc_status: 'VALIDATED' } }),
-        this.prisma.user.count({ where: { kyc_status: 'SESSION2_DONE', kycSubmittedAt: { not: null } } }),
+        this.prisma.user.count({
+          where: { kyc_status: 'SESSION2_DONE', kycSubmittedAt: { not: null } },
+        }),
         this.prisma.loan.groupBy({
           by: ['status'],
           _count: { id: true },
@@ -57,7 +60,9 @@ export class AdminService {
           _sum: { amount: true },
         }),
         this.prisma.transaction.count({ where: { status: 'PENDING' } }),
-        this.prisma.transaction.count({ where: { status: 'PHANTOM_DETECTED' } }),
+        this.prisma.transaction.count({
+          where: { status: 'PHANTOM_DETECTED' },
+        }),
         this.prisma.guaranteeFund.findFirst({
           select: {
             total_capital: true,
@@ -90,20 +95,29 @@ export class AdminService {
           overdueCount,
           repaidCount: byStatus['REPAID'] ?? 0,
           pendingImfCount: byStatus['PENDING_IMF'] ?? 0,
-          totalPortfolioValue: (portfolioValue._sum.outstanding_balance ?? 0) as DashboardResponse['loans']['totalPortfolioValue'],
+          totalPortfolioValue: (portfolioValue._sum.outstanding_balance ??
+            0) as DashboardResponse['loans']['totalPortfolioValue'],
           nplRatio,
         },
         transactions: {
           todayCount: txToday._count.id,
-          todayVolume: (txToday._sum.amount ?? 0) as DashboardResponse['transactions']['todayVolume'],
+          todayVolume: (txToday._sum.amount ??
+            0) as DashboardResponse['transactions']['todayVolume'],
           pendingCount: txPending,
           phantomCount: txPhantom,
         },
         guaranteeFund: guaranteeFund
           ? {
-              totalCapital: guaranteeFund.total_capital as NonNullable<DashboardResponse['guaranteeFund']>['totalCapital'],
-              activePortfolioValue: guaranteeFund.active_portfolio_value as NonNullable<DashboardResponse['guaranteeFund']>['activePortfolioValue'],
-              coverageRatio: guaranteeFund.coverage_ratio as NonNullable<DashboardResponse['guaranteeFund']>['coverageRatio'],
+              totalCapital: guaranteeFund.total_capital as NonNullable<
+                DashboardResponse['guaranteeFund']
+              >['totalCapital'],
+              activePortfolioValue:
+                guaranteeFund.active_portfolio_value as NonNullable<
+                  DashboardResponse['guaranteeFund']
+                >['activePortfolioValue'],
+              coverageRatio: guaranteeFund.coverage_ratio as NonNullable<
+                DashboardResponse['guaranteeFund']
+              >['coverageRatio'],
               suspensionActive: guaranteeFund.suspension_active,
             }
           : null,
@@ -141,17 +155,26 @@ export class AdminService {
         _sum: { amount: true },
       }),
       this.prisma.transaction.count({
-        where: { is_reconciled: true, initiated_at: { gte: fromDate, lte: toDate } },
+        where: {
+          is_reconciled: true,
+          initiated_at: { gte: fromDate, lte: toDate },
+        },
       }),
       this.prisma.transaction.count({
-        where: { is_reconciled: false, initiated_at: { gte: fromDate, lte: toDate } },
+        where: {
+          is_reconciled: false,
+          initiated_at: { gte: fromDate, lte: toDate },
+        },
       }),
       this.prisma.transaction.aggregate({
         where: { initiated_at: { gte: fromDate, lte: toDate } },
         _sum: { amount: true },
       }),
       this.prisma.transaction.count({
-        where: { status: 'PHANTOM_DETECTED', initiated_at: { gte: fromDate, lte: toDate } },
+        where: {
+          status: 'PHANTOM_DETECTED',
+          initiated_at: { gte: fromDate, lte: toDate },
+        },
       }),
       this.prisma.guaranteeFund.findFirst({
         select: {
@@ -183,7 +206,8 @@ export class AdminService {
         return {
           label: r.label,
           count: agg._count.id,
-          amount: (agg._sum.amount ?? 0) as BceaoReportResponse['loans']['byAmountRange'][number]['amount'],
+          amount: (agg._sum.amount ??
+            0) as BceaoReportResponse['loans']['byAmountRange'][number]['amount'],
         };
       }),
     );
@@ -198,27 +222,37 @@ export class AdminService {
       generatedAt: new Date(),
       period: { from, to },
       loans: {
-        totalEncours: (loansInPeriod._sum.outstanding_balance ?? 0) as BceaoReportResponse['loans']['totalEncours'],
-        totalDisbursed: (loansInPeriod._sum.amount ?? 0) as BceaoReportResponse['loans']['totalDisbursed'],
+        totalEncours: (loansInPeriod._sum.outstanding_balance ??
+          0) as BceaoReportResponse['loans']['totalEncours'],
+        totalDisbursed: (loansInPeriod._sum.amount ??
+          0) as BceaoReportResponse['loans']['totalDisbursed'],
         nplRate,
         byDuration: loansByDuration.map((r) => ({
           months: r.duration_months,
           count: r._count.id,
-          amount: (r._sum.amount ?? 0) as BceaoReportResponse['loans']['byDuration'][number]['amount'],
+          amount: (r._sum.amount ??
+            0) as BceaoReportResponse['loans']['byDuration'][number]['amount'],
         })),
         byAmountRange,
       },
       transactions: {
         totalReconciled: txReconciled,
         totalUnreconciled: txUnreconciled,
-        totalVolume: (txVolume._sum.amount ?? 0) as BceaoReportResponse['transactions']['totalVolume'],
+        totalVolume: (txVolume._sum.amount ??
+          0) as BceaoReportResponse['transactions']['totalVolume'],
         phantomCount: txPhantom,
       },
       guaranteeFund: guaranteeFund
         ? {
-            coverageRatio: guaranteeFund.coverage_ratio as NonNullable<BceaoReportResponse['guaranteeFund']>['coverageRatio'],
-            minThreshold: guaranteeFund.min_threshold as NonNullable<BceaoReportResponse['guaranteeFund']>['minThreshold'],
-            targetThreshold: guaranteeFund.target_threshold as NonNullable<BceaoReportResponse['guaranteeFund']>['targetThreshold'],
+            coverageRatio: guaranteeFund.coverage_ratio as NonNullable<
+              BceaoReportResponse['guaranteeFund']
+            >['coverageRatio'],
+            minThreshold: guaranteeFund.min_threshold as NonNullable<
+              BceaoReportResponse['guaranteeFund']
+            >['minThreshold'],
+            targetThreshold: guaranteeFund.target_threshold as NonNullable<
+              BceaoReportResponse['guaranteeFund']
+            >['targetThreshold'],
             suspensionActive: guaranteeFund.suspension_active,
           }
         : null,
@@ -248,10 +282,13 @@ export class AdminService {
     return {
       id: fund.id,
       totalCapital: fund.total_capital as GuaranteeFundResponse['totalCapital'],
-      activePortfolioValue: fund.active_portfolio_value as GuaranteeFundResponse['activePortfolioValue'],
-      coverageRatio: fund.coverage_ratio as GuaranteeFundResponse['coverageRatio'],
+      activePortfolioValue:
+        fund.active_portfolio_value as GuaranteeFundResponse['activePortfolioValue'],
+      coverageRatio:
+        fund.coverage_ratio as GuaranteeFundResponse['coverageRatio'],
       minThreshold: fund.min_threshold as GuaranteeFundResponse['minThreshold'],
-      targetThreshold: fund.target_threshold as GuaranteeFundResponse['targetThreshold'],
+      targetThreshold:
+        fund.target_threshold as GuaranteeFundResponse['targetThreshold'],
       suspensionActive: fund.suspension_active,
       lastReconstituionDate: fund.last_reconstitution_date,
     };
@@ -283,7 +320,6 @@ export class AdminService {
           email: true,
           status: true,
           kyc_status: true,
-          isPhoneVerified: true,
           created_at: true,
           admin: { select: { id: true } },
           imfStaff: { select: { id: true } },
@@ -307,7 +343,6 @@ export class AdminService {
         email: u.email,
         status: u.status,
         kyc_status: u.kyc_status,
-        isPhoneVerified: u.isPhoneVerified,
         createdAt: u.created_at,
         role: u.admin
           ? 'admin'
@@ -339,7 +374,6 @@ export class AdminService {
         email: true,
         status: true,
         kyc_status: true,
-        isPhoneVerified: true,
         created_at: true,
         admin: { select: { id: true } },
         imfStaff: { select: { id: true } },
@@ -359,7 +393,6 @@ export class AdminService {
       email: user.email,
       status: user.status,
       kyc_status: user.kyc_status,
-      isPhoneVerified: user.isPhoneVerified,
       createdAt: user.created_at,
       role: user.admin
         ? 'admin'
@@ -385,9 +418,13 @@ export class AdminService {
       select: { id: true },
     });
 
-    if (!admin) throw new ForbiddenException('Accès réservé aux administrateurs');
+    if (!admin)
+      throw new ForbiddenException('Accès réservé aux administrateurs');
 
-    await this.prisma.user.findUniqueOrThrow({ where: { id: targetUserId }, select: { id: true } });
+    await this.prisma.user.findUniqueOrThrow({
+      where: { id: targetUserId },
+      select: { id: true },
+    });
 
     await this.prisma.user.update({
       where: { id: targetUserId },
@@ -395,5 +432,107 @@ export class AdminService {
     });
 
     return this.getUserById(targetUserId);
+  }
+
+  // ── Scoring Engine ───────────────────────────────────────────────────────────
+
+  async getScoringEngineConfig() {
+    const existing = await this.prisma.scoringEngine.findFirst({
+      select: {
+        id: true,
+        momo_weight: true,
+        tontine_weight: true,
+        imf_weight: true,
+        warning_signal_days: true,
+      },
+    });
+
+    if (!existing) {
+      const created = await this.prisma.scoringEngine.create({
+        data: {
+          momo_weight: 0.4,
+          tontine_weight: 0.35,
+          imf_weight: 0.25,
+          warning_signal_days: 45,
+        },
+        select: {
+          id: true,
+          momo_weight: true,
+          tontine_weight: true,
+          imf_weight: true,
+          warning_signal_days: true,
+        },
+      });
+
+      return {
+        id: created.id,
+        momoWeight: created.momo_weight.valueOf() as unknown as number,
+        tontineWeight: created.tontine_weight.valueOf() as unknown as number,
+        imfWeight: created.imf_weight.valueOf() as unknown as number,
+        warningSignalDays: created.warning_signal_days,
+      };
+    }
+
+    return {
+      id: existing.id,
+      momoWeight: existing.momo_weight.valueOf() as unknown as number,
+      tontineWeight: existing.tontine_weight.valueOf() as unknown as number,
+      imfWeight: existing.imf_weight.valueOf() as unknown as number,
+      warningSignalDays: existing.warning_signal_days,
+    };
+  }
+
+  async updateScoringEngineConfig(dto: UpdateScoringEngineDto) {
+    const existing = await this.prisma.scoringEngine.findFirst({
+      select: { id: true },
+    });
+
+    const data = {
+      momo_weight: dto.momoWeight,
+      tontine_weight: dto.tontineWeight,
+      imf_weight: dto.imfWeight,
+      warning_signal_days: dto.warningSignalDays,
+    };
+
+    if (existing) {
+      const updated = await this.prisma.scoringEngine.update({
+        where: { id: existing.id },
+        data,
+        select: {
+          id: true,
+          momo_weight: true,
+          tontine_weight: true,
+          imf_weight: true,
+          warning_signal_days: true,
+        },
+      });
+
+      return {
+        id: updated.id,
+        momoWeight: updated.momo_weight.valueOf() as unknown as number,
+        tontineWeight: updated.tontine_weight.valueOf() as unknown as number,
+        imfWeight: updated.imf_weight.valueOf() as unknown as number,
+        warningSignalDays: updated.warning_signal_days,
+      };
+    }
+
+    const created = await this.prisma.scoringEngine.create({
+      data,
+      select: {
+        id: true,
+        momo_weight: true,
+        tontine_weight: true,
+        imf_weight: true,
+        warning_signal_days: true,
+      },
+    });
+
+    return {
+      id: created.id,
+      momoWeight: created.momo_weight.valueOf() as unknown as number,
+      tontineWeight: created.tontine_weight.valueOf() as unknown as number,
+      imfWeight: created.imf_weight.valueOf() as unknown as number,
+      warningSignalDays: created.warning_signal_days,
+    };
   }
 }

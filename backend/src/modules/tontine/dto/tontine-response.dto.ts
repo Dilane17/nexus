@@ -17,7 +17,7 @@ export interface TontineMemberInfo {
   borrowerId: string;
   firstName: string;
   lastName: string;
-  phone: string;
+  phone: string | null;
   joinedAt: Date;
 }
 

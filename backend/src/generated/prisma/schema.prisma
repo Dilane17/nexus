@@ -12,8 +12,8 @@ model User {
   id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   firstName        String        @db.VarChar(150)
   lastName         String        @db.VarChar(150)
-  phone            String        @unique @db.VarChar(20)
-  email            String?       @unique @db.VarChar(200)
+  phone            String?       @unique @db.VarChar(20)
+  email            String        @unique @db.VarChar(200)
   city             String? // ex: "Cotonou"
   district         String? // ex: "Cadjehoun"
   googleId         String?       @unique // pour OAuth Google
@@ -22,8 +22,7 @@ model User {
   // OTP
   otpCode          String? // code 5 chiffres hashé bcrypt
   otpExpiry        DateTime? // expiration dans 5 minutes
-  otpType          String? // 'PHONE_VERIFICATION' | 'EMAIL_VERIFICATION'
-  isPhoneVerified  Boolean       @default(false)
+  otpType          String? // 'EMAIL_VERIFICATION' | 'PASSWORD_RESET'
   isEmailVerified  Boolean       @default(false)
   kyc_status       kyc_status    @default(NOT_STARTED)
   kyc_document_url String?       @db.VarChar(500)

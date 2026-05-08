@@ -2,7 +2,7 @@ export type UserRole = 'investor' | 'borrower' | 'admin' | 'agent' | 'imf_staff'
 
 export interface JwtPayload {
   sub: string;
-  phone: string;
+  email: string;
   role: UserRole;
   iat?: number;
   exp?: number;
@@ -12,14 +12,13 @@ export interface AuthUser {
   id: string;
   firstName: string;
   lastName: string;
-  phone: string;
-  email: string | null;
+  email: string;
+  phone: string | null;
   city: string | null;
   district: string | null;
   avatar: string | null;
   status: string;
   kyc_status: string;
-  isPhoneVerified: boolean;
   isEmailVerified: boolean;
 }
 

@@ -78,11 +78,10 @@ export interface AdminUserItem {
   id: string;
   firstName: string;
   lastName: string;
-  phone: string;
-  email: string | null;
+  phone: string | null;
+  email: string;
   status: string;
   kyc_status: string;
-  isPhoneVerified: boolean;
   createdAt: Date;
   role: string;
 }

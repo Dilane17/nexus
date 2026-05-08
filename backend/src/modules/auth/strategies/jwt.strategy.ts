@@ -29,6 +29,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     // Propager le rôle issu du payload — déterminé une seule fois à la connexion
-    return { sub: payload.sub, phone: payload.phone, role: payload.role };
+    return { sub: payload.sub, email: payload.email, role: payload.role };
   }
 }

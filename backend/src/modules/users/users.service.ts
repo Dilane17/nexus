@@ -275,7 +275,6 @@ export class UsersService {
         avatar: true,
         status: true,
         kyc_status: true,
-        isPhoneVerified: true,
         isEmailVerified: true,
         investor: {
           select: {
@@ -338,7 +337,6 @@ export class UsersService {
       avatar: user.avatar,
       status: user.status,
       kyc_status: user.kyc_status,
-      isPhoneVerified: user.isPhoneVerified,
       isEmailVerified: user.isEmailVerified,
       role,
       investorData,

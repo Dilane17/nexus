@@ -8,6 +8,7 @@ import {
 import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { NotificationService } from '@shared/notifications/notification.service';
+import { GuaranteeFundService } from '@modules/guarantee-fund/guarantee-fund.service';
 import type { CreateLoanDto } from './dto/create-loan.dto';
 import type { ValidateLoanDto } from './dto/validate-loan.dto';
 import type { RepayLoanDto } from './dto/repay-loan.dto';
@@ -68,8 +69,10 @@ function toLoanResponse(
     interestRate: loan.interest_rate as LoanResponse['interestRate'],
     durationMonths: loan.duration_months,
     status: loan.status,
-    monthlyInstallment: loan.monthly_installment as LoanResponse['monthlyInstallment'],
-    outstandingBalance: loan.outstanding_balance as LoanResponse['outstandingBalance'],
+    monthlyInstallment:
+      loan.monthly_installment as LoanResponse['monthlyInstallment'],
+    outstandingBalance:
+      loan.outstanding_balance as LoanResponse['outstandingBalance'],
     daysOverdue: loan.days_overdue,
     validatedByImf: loan.validated_by_imf,
     disbursedAt: loan.disbursed_at,
@@ -88,6 +91,7 @@ export class LoansService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly notifications: NotificationService,
+    private readonly guaranteeFundService: GuaranteeFundService,
   ) {}
 
   // ── Créer une demande de prêt ────────────────────────────────────────────────
@@ -190,6 +194,52 @@ export class LoansService {
     };
   }
 
+  // ── Prêts ouverts au financement (marketplace investisseur) ─────────────────
+
+  async getFundingLoans(
+    userId: string,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedLoansResponse> {
+    const investor = await this.prisma.investor.findUnique({
+      where: { id: userId },
+      select: { id: true },
+    });
+
+    if (!investor) {
+      throw new ForbiddenException('Accès réservé aux investisseurs');
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [loans, total] = await Promise.all([
+      this.prisma.loan.findMany({
+        where: {
+          status: 'FUNDING',
+          borrower_id: { not: userId },
+        },
+        select: LOAN_SELECT,
+        orderBy: { created_at: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.loan.count({
+        where: {
+          status: 'FUNDING',
+          borrower_id: { not: userId },
+        },
+      }),
+    ]);
+
+    return {
+      items: loans.map((l) => toLoanResponse(l)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
   // ── Détail d'un prêt ─────────────────────────────────────────────────────────
 
   async getLoanById(userId: string, loanId: string): Promise<LoanResponse> {
@@ -209,7 +259,19 @@ export class LoansService {
     const isStaff = await this.isImfStaffOrAdmin(userId);
 
     if (!isOwner && !isStaff) {
-      throw new ForbiddenException('Accès refusé à ce prêt');
+      // Un investisseur peut voir le détail d'un prêt FUNDING qui n'est pas le sien
+      const isInvestor = await this.prisma.investor.findUnique({
+        where: { id: userId },
+        select: { id: true },
+      });
+      const canViewAsFundingLoan =
+        !!isInvestor &&
+        loan.status === 'FUNDING' &&
+        loan.borrower_id !== userId;
+
+      if (!canViewAsFundingLoan) {
+        throw new ForbiddenException('Accès refusé à ce prêt');
+      }
     }
 
     return toLoanResponse(loan, { investmentsCount: loan._count.investments });
@@ -256,7 +318,8 @@ export class LoansService {
     return {
       items: loans.map((l) => ({
         id: l.id,
-        amount: l.amount as PaginatedPendingImfResponse['items'][number]['amount'],
+        amount:
+          l.amount as PaginatedPendingImfResponse['items'][number]['amount'],
         durationMonths: l.duration_months,
         purpose: l.purpose,
         createdAt: l.created_at,
@@ -365,16 +428,20 @@ export class LoansService {
     });
 
     if (!loan) throw new NotFoundException('Prêt introuvable');
-    if (loan.borrower_id !== userId) throw new ForbiddenException('Ce prêt ne vous appartient pas');
+    if (loan.borrower_id !== userId)
+      throw new ForbiddenException('Ce prêt ne vous appartient pas');
     if (!['ACTIVE', 'OVERDUE'].includes(loan.status)) {
-      throw new BadRequestException(`Impossible de rembourser un prêt en statut "${loan.status}"`);
+      throw new BadRequestException(
+        `Impossible de rembourser un prêt en statut "${loan.status}"`,
+      );
     }
 
     const existingTx = await this.prisma.transaction.findUnique({
       where: { momo_reference: dto.momo_reference },
       select: { id: true },
     });
-    if (existingTx) throw new BadRequestException('Cette référence MoMo a déjà été utilisée');
+    if (existingTx)
+      throw new BadRequestException('Cette référence MoMo a déjà été utilisée');
 
     // Investissements actifs liés — lus avant la transaction (lecture seule)
     const activeInvestments = await this.prisma.investment.findMany({
@@ -387,10 +454,15 @@ export class LoansService {
     const repaidAmount = Math.min(dto.amount, currentBalance);
     const newBalance = Math.max(0, currentBalance - repaidAmount);
     const isFullyRepaid = newBalance === 0;
-    const isOnTime = loan.next_due_date === null || new Date() <= loan.next_due_date;
+    const isOnTime =
+      loan.next_due_date === null || new Date() <= loan.next_due_date;
     const nextDueDate = isFullyRepaid
       ? null
-      : this.advanceDueDate(loan.next_due_date, Number(loan.monthly_installment), repaidAmount);
+      : this.advanceDueDate(
+          loan.next_due_date,
+          Number(loan.monthly_installment),
+          repaidAmount,
+        );
 
     const updatedLoan = await this.prisma.$transaction(async (tx) => {
       // 1. Mettre à jour le prêt
@@ -419,7 +491,8 @@ export class LoansService {
 
       // 3. Distribuer les retours aux investisseurs proportionnellement
       for (const investment of activeInvestments) {
-        const share = loanAmount > 0 ? Number(investment.amount) / loanAmount : 0;
+        const share =
+          loanAmount > 0 ? Number(investment.amount) / loanAmount : 0;
         const investorReturn = Math.round(repaidAmount * share * 100) / 100;
 
         await tx.investment.update({
@@ -511,8 +584,7 @@ export class LoansService {
         (now.getTime() - new Date(loan.next_due_date!).getTime()) / 86_400_000,
       );
 
-      const newStatus =
-        daysOverdue > 30 ? 'GUARANTEE_ACTIVATED' : 'OVERDUE';
+      const newStatus = daysOverdue > 30 ? 'GUARANTEE_ACTIVATED' : 'OVERDUE';
 
       await this.prisma.loan.update({
         where: { id: loan.id },
@@ -523,6 +595,21 @@ export class LoansService {
         this.logger.error(
           `[CRON] Prêt ${loan.id} → GUARANTEE_ACTIVATED (${daysOverdue}j de retard)`,
         );
+
+        const investments = await this.prisma.investment.findMany({
+          where: { loan_id: loan.id, status: 'ACTIVE', is_guaranteed: true },
+          select: { id: true },
+        });
+
+        for (const inv of investments) {
+          try {
+            await this.guaranteeFundService.activateGuarantee(inv.id);
+          } catch (err) {
+            this.logger.error(
+              `[CRON] Échec activation garantie investment=${inv.id}: ${err instanceof Error ? err.message : 'inconnu'}`,
+            );
+          }
+        }
       } else {
         this.logger.warn(
           `[CRON] Prêt ${loan.id} → OVERDUE (${daysOverdue}j de retard)`,
@@ -545,18 +632,24 @@ export class LoansService {
 
   // ── Helpers privés ───────────────────────────────────────────────────────────
 
-  private async computeHybridScore(borrowerId: string): Promise<HybridScoreResponse> {
+  private async computeHybridScore(
+    borrowerId: string,
+  ): Promise<HybridScoreResponse> {
     const [borrower, engine] = await Promise.all([
       this.prisma.borrower.findUniqueOrThrow({
         where: { id: borrowerId },
-        select: { credit_score: true, tontine_score: true, default_count: true },
+        select: {
+          credit_score: true,
+          tontine_score: true,
+          default_count: true,
+        },
       }),
       this.prisma.scoringEngine.findFirst({
         select: { momo_weight: true, tontine_weight: true, imf_weight: true },
       }),
     ]);
 
-    const momoWeight = engine ? Number(engine.momo_weight) : 0.40;
+    const momoWeight = engine ? Number(engine.momo_weight) : 0.4;
     const tontineWeight = engine ? Number(engine.tontine_weight) : 0.35;
     const imfWeight = engine ? Number(engine.imf_weight) : 0.25;
 
@@ -616,8 +709,14 @@ export class LoansService {
 
   private async isImfStaffOrAdmin(userId: string): Promise<boolean> {
     const [imfStaff, admin] = await Promise.all([
-      this.prisma.imfStaff.findUnique({ where: { id: userId }, select: { id: true } }),
-      this.prisma.admin.findUnique({ where: { id: userId }, select: { id: true } }),
+      this.prisma.imfStaff.findUnique({
+        where: { id: userId },
+        select: { id: true },
+      }),
+      this.prisma.admin.findUnique({
+        where: { id: userId },
+        select: { id: true },
+      }),
     ]);
     return !!(imfStaff ?? admin);
   }

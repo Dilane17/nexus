@@ -154,6 +154,12 @@ export class InvestmentsService {
       );
     }
 
+    if (loan.borrower_id === userId) {
+      throw new BadRequestException(
+        'Vous ne pouvez pas investir dans votre propre prêt',
+      );
+    }
+
     const alreadyFunded = loan.investments.reduce(
       (sum, inv) => sum + Number(inv.amount),
       0,
