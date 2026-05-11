@@ -5,7 +5,7 @@ type Decimal = Prisma.Decimal;
 
 export interface KycStatusResponse {
   userId: string;
-  kyc_status: string;
+  kycStatus: string;
   sessionsCompleted: number;
   kycDocumentType: string | null;
   kycDocumentUrl: string | null;
@@ -27,7 +27,7 @@ export interface PendingKycItem {
   phone: string | null;
   email: string;
   kycSubmittedAt: Date | null;
-  kyc_status: string;
+  kycStatus: string;
 }
 
 export interface PaginatedKycResponse {
@@ -74,7 +74,7 @@ export interface UserProfileResponse {
   district: string | null;
   avatar: string | null;
   status: string;
-  kyc_status: string;
+  kycStatus: string;
   isEmailVerified: boolean;
   role: UserRole;
   investorData: InvestorData | null;

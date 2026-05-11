@@ -131,7 +131,7 @@ export class InvestmentsService {
     }
 
     const loan = await this.prisma.loan.findUnique({
-      where: { id: dto.loan_id },
+      where: { id: dto.loanId },
       select: {
         id: true,
         borrower_id: true,
@@ -211,7 +211,7 @@ export class InvestmentsService {
       const created = await tx.investment.create({
         data: {
           investor_id: userId,
-          loan_id: dto.loan_id,
+          loan_id: dto.loanId,
           amount: dto.amount,
           expected_return: expectedReturn,
           maturity_date: maturityDate,
@@ -261,7 +261,7 @@ export class InvestmentsService {
         nextDueDate.setMonth(nextDueDate.getMonth() + 1);
 
         await tx.loan.update({
-          where: { id: dto.loan_id },
+          where: { id: dto.loanId },
           data: {
             status: 'ACTIVE',
             disbursed_at: new Date(),
@@ -438,16 +438,16 @@ export class InvestmentsService {
       where: { investor_id: userId },
       create: {
         investor_id: userId,
-        is_active: dto.is_active,
-        max_amount: dto.max_amount,
-        max_duration: dto.max_duration,
-        min_hybrid_score: dto.min_hybrid_score ?? 0,
+        is_active: dto.isActive,
+        max_amount: dto.maxAmount,
+        max_duration: dto.maxDuration,
+        min_hybrid_score: dto.minHybridScore ?? 0,
       },
       update: {
-        is_active: dto.is_active,
-        max_amount: dto.max_amount,
-        max_duration: dto.max_duration,
-        min_hybrid_score: dto.min_hybrid_score ?? 0,
+        is_active: dto.isActive,
+        max_amount: dto.maxAmount,
+        max_duration: dto.maxDuration,
+        min_hybrid_score: dto.minHybridScore ?? 0,
       },
       select: {
         id: true,
@@ -762,7 +762,7 @@ export class InvestmentsService {
       }
 
       try {
-        await this.createInvestment(userId, { loan_id: loan.id, amount: Math.floor(investAmount) });
+        await this.createInvestment(userId, { loanId: loan.id, amount: Math.floor(investAmount) });
         investmentsCreated++;
         totalInvested += Math.floor(investAmount);
         logger.log(`[AUTO-INVEST] ${Math.floor(investAmount).toLocaleString()} FCFA → loan ${loan.id}`);

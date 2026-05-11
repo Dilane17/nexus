@@ -101,7 +101,7 @@ describe('LoansService', () => {
       await expect(
         service.createLoan('user-id', {
           amount: 50000,
-          duration_months: 6,
+          durationMonths: 6,
           purpose: 'Test achat stock',
         }),
       ).rejects.toThrow(ForbiddenException);
@@ -116,7 +116,7 @@ describe('LoansService', () => {
       await expect(
         service.createLoan('user-id', {
           amount: 50000,
-          duration_months: 6,
+          durationMonths: 6,
           purpose: 'Test achat stock',
         }),
       ).rejects.toThrow(ForbiddenException);
@@ -130,7 +130,7 @@ describe('LoansService', () => {
       await expect(
         service.createLoan('user-id', {
           amount: 50000,
-          duration_months: 6,
+          durationMonths: 6,
           purpose: 'Test achat stock',
         }),
       ).rejects.toThrow(BadRequestException);

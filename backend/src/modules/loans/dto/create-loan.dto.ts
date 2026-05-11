@@ -13,7 +13,7 @@ export const createLoanSchema = z.object({
     .int('Le montant doit être un entier en FCFA')
     .min(MIN_AMOUNT, `Montant minimum : ${MIN_AMOUNT.toLocaleString()} FCFA`)
     .max(MAX_AMOUNT, `Montant maximum : ${MAX_AMOUNT.toLocaleString()} FCFA`),
-  duration_months: z
+  durationMonths: z
     .union([z.literal(3), z.literal(6), z.literal(9), z.literal(12)], {
       error: 'Durée invalide — valeurs autorisées : 3, 6, 9 ou 12 mois',
     }),
@@ -37,7 +37,7 @@ export class CreateLoanDtoDoc {
     example: 6,
     description: 'Durée en mois (3, 6, 9 ou 12 uniquement — règle BCEAO)',
   })
-  duration_months!: LoanDuration;
+  durationMonths!: LoanDuration;
 
   @ApiProperty({
     example: 'Achat de stock pour mon commerce de tissus',

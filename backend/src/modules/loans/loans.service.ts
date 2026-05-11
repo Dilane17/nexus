@@ -136,7 +136,7 @@ export class LoansService {
     const monthlyInstallment = this.calculateMonthlyInstallment(
       dto.amount,
       DEFAULT_INTEREST_RATE,
-      dto.duration_months,
+      dto.durationMonths,
     );
 
     const loan = await this.prisma.loan.create({
@@ -144,7 +144,7 @@ export class LoansService {
         borrower_id: userId,
         amount: dto.amount,
         interest_rate: DEFAULT_INTEREST_RATE,
-        duration_months: dto.duration_months,
+        duration_months: dto.durationMonths,
         monthly_installment: monthlyInstallment,
         outstanding_balance: dto.amount,
         purpose: dto.purpose,
@@ -437,7 +437,7 @@ export class LoansService {
     }
 
     const existingTx = await this.prisma.transaction.findUnique({
-      where: { momo_reference: dto.momo_reference },
+      where: { momo_reference: dto.momoReference },
       select: { id: true },
     });
     if (existingTx)
@@ -483,8 +483,8 @@ export class LoansService {
           type: 'LOAN_REPAYMENT',
           amount: repaidAmount,
           status: 'PENDING',
-          momo_reference: dto.momo_reference,
-          momo_provider: dto.momo_provider,
+          momo_reference: dto.momoReference,
+          momo_provider: dto.momoProvider,
           created_by: userId,
         },
       });

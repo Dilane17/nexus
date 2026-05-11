@@ -2,7 +2,7 @@ import { z } from 'zod/v4';
 import { ApiProperty } from '@nestjs/swagger';
 
 export const createInvestmentSchema = z.object({
-  loan_id: z
+  loanId: z
     .string({ error: "L'identifiant du prêt est requis" })
     .uuid("L'identifiant du prêt doit être un UUID valide"),
   amount: z
@@ -19,7 +19,7 @@ export class CreateInvestmentDtoDoc {
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'UUID du prêt en statut FUNDING',
   })
-  loan_id!: string;
+  loanId!: string;
 
   @ApiProperty({
     example: 50000,

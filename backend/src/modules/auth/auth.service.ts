@@ -44,6 +44,36 @@ const USER_PUBLIC_SELECT = {
   isEmailVerified: true,
 } as const;
 
+type UserPublicRecord = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+  city: string | null;
+  district: string | null;
+  avatar: string | null;
+  status: string;
+  kyc_status: string;
+  isEmailVerified: boolean;
+};
+
+function toAuthUser(user: UserPublicRecord): AuthUser {
+  return {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phone: user.phone,
+    city: user.city,
+    district: user.district,
+    avatar: user.avatar,
+    status: user.status,
+    kycStatus: user.kyc_status,
+    isEmailVerified: user.isEmailVerified,
+  };
+}
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -390,7 +420,7 @@ export class AuthService {
       throw new UnauthorizedException('Utilisateur introuvable');
     }
 
-    return user;
+    return toAuthUser(user);
   }
 
   // ── Update Profile ─────────────────────────────────────────────────────────
@@ -399,7 +429,7 @@ export class AuthService {
     userId: string,
     dto: UpdateProfileDto,
   ): Promise<AuthUser> {
-    return this.prisma.user.update({
+    const user = await this.prisma.user.update({
       where: { id: userId },
       data: {
         ...(dto.firstName !== undefined && { firstName: dto.firstName }),
@@ -409,6 +439,7 @@ export class AuthService {
       },
       select: USER_PUBLIC_SELECT,
     });
+    return toAuthUser(user);
   }
 
   // ── Change Password ────────────────────────────────────────────────────────
@@ -582,6 +613,6 @@ export class AuthService {
       select: USER_PUBLIC_SELECT,
     });
 
-    return { ...tokens, user };
+    return { ...tokens, user: toAuthUser(user) };
   }
 }

@@ -18,7 +18,7 @@ export interface AuthUser {
   district: string | null;
   avatar: string | null;
   status: string;
-  kyc_status: string;
+  kycStatus: string;
   isEmailVerified: boolean;
 }
 

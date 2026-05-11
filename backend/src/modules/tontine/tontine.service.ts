@@ -111,7 +111,7 @@ export class TontineService {
           name: dto.name,
           leader_user_id: userId,
           leader_phone: user?.phone ?? borrower.mobile_money_number,
-          monthly_contribution: dto.monthly_contribution,
+          monthly_contribution: dto.monthlyContribution,
           member_count: 1,
           status: 'PENDING',
         },
@@ -350,7 +350,7 @@ export class TontineService {
     }
 
     const isMember = group.tontine_members.some(
-      (m) => m.borrower_id === dto.beneficiary_id,
+      (m) => m.borrower_id === dto.beneficiaryId,
     );
     if (!isMember) {
       throw new BadRequestException(
@@ -359,13 +359,13 @@ export class TontineService {
     }
 
     const existingCycle = await this.prisma.tontineCycle.findUnique({
-      where: { group_id_cycle_number: { group_id: groupId, cycle_number: dto.cycle_number } },
+      where: { group_id_cycle_number: { group_id: groupId, cycle_number: dto.cycleNumber } },
       select: { id: true },
     });
 
     if (existingCycle) {
       throw new BadRequestException(
-        `Le cycle numéro ${dto.cycle_number} existe déjà pour ce groupe`,
+        `Le cycle numéro ${dto.cycleNumber} existe déjà pour ce groupe`,
       );
     }
 
@@ -373,10 +373,10 @@ export class TontineService {
       await tx.tontineCycle.create({
         data: {
           group_id: groupId,
-          cycle_number: dto.cycle_number,
-          start_date: new Date(dto.start_date),
-          end_date: new Date(dto.end_date),
-          beneficiary_id: dto.beneficiary_id,
+          cycle_number: dto.cycleNumber,
+          start_date: new Date(dto.startDate),
+          end_date: new Date(dto.endDate),
+          beneficiary_id: dto.beneficiaryId,
         },
       });
 
@@ -428,9 +428,9 @@ export class TontineService {
         where: { id: cycleId },
         data: {
           is_complete: true,
-          members_paid: dto.members_paid,
-          members_defaulted: dto.members_defaulted,
-          total_collected: dto.total_collected,
+          members_paid: dto.membersPaid,
+          members_defaulted: dto.membersDefaulted,
+          total_collected: dto.totalCollected,
         },
       });
 

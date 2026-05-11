@@ -92,8 +92,8 @@ describe('TransactionsService', () => {
       await expect(
         service.initiateDeposit('user-id', {
           amount: 10000,
-          momo_provider: 'MTN_MOMO',
-          momo_phone: '+22997000000',
+          momoProvider: 'MTN_MOMO',
+          momoPhone: '+22997000000',
         }),
       ).rejects.toThrow(ForbiddenException);
     });
@@ -151,8 +151,8 @@ describe('TransactionsService', () => {
 
       const result = await service.initiateDeposit('user-id', {
         amount: 10000,
-        momo_provider: 'MTN_MOMO',
-        momo_phone: '+22997000000',
+        momoProvider: 'MTN_MOMO',
+        momoPhone: '+22997000000',
       });
 
       expect(routerMock.resolveByMomoProvider).toHaveBeenCalledWith('MTN_MOMO');
@@ -188,8 +188,8 @@ describe('TransactionsService', () => {
       await expect(
         service.initiateWithdrawal('user-id', {
           amount: 10000,
-          momo_provider: 'MTN_MOMO',
-          momo_number: '+22997000000',
+          momoProvider: 'MTN_MOMO',
+          momoNumber: '+22997000000',
         }),
       ).rejects.toThrow(BadRequestException);
     });
@@ -230,8 +230,8 @@ describe('TransactionsService', () => {
       await expect(
         service.initiateWithdrawal('user-id', {
           amount: 10000,
-          momo_provider: 'MTN_MOMO',
-          momo_number: '+22997000000',
+          momoProvider: 'MTN_MOMO',
+          momoNumber: '+22997000000',
         }),
       ).rejects.toThrow(BadGatewayException);
 

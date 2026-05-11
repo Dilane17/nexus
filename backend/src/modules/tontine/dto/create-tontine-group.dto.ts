@@ -6,7 +6,7 @@ export const createTontineGroupSchema = z.object({
     .string({ error: 'Le nom du groupe est requis' })
     .min(3, 'Le nom doit contenir au moins 3 caractères')
     .max(150, 'Le nom ne peut pas dépasser 150 caractères'),
-  monthly_contribution: z
+  monthlyContribution: z
     .number({ error: 'La cotisation mensuelle doit être un nombre' })
     .positive('La cotisation mensuelle doit être positive')
     .int('La cotisation doit être un entier en FCFA')
@@ -20,5 +20,5 @@ export class CreateTontineGroupDtoDoc {
   name!: string;
 
   @ApiProperty({ example: 10000, description: 'Cotisation mensuelle par membre en FCFA' })
-  monthly_contribution!: number;
+  monthlyContribution!: number;
 }

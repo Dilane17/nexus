@@ -7,10 +7,10 @@ export const withdrawalSchema = z.object({
     .positive('Le montant doit être positif')
     .int('Le montant doit être un entier en FCFA')
     .min(1_000, 'Montant minimum de retrait : 1 000 FCFA'),
-  momo_provider: z.enum(['MTN_MOMO', 'MOOV_FLOOZ'], {
+  momoProvider: z.enum(['MTN_MOMO', 'MOOV_FLOOZ'], {
     error: 'Opérateur invalide — MTN_MOMO ou MOOV_FLOOZ',
   }),
-  momo_number: z
+  momoNumber: z
     .string({ error: 'Le numéro MoMo destinataire est requis' })
     .min(8, 'Numéro MoMo invalide')
     .max(20, 'Numéro MoMo trop long'),
@@ -23,8 +23,8 @@ export class WithdrawalDtoDoc {
   amount!: number;
 
   @ApiProperty({ enum: ['MTN_MOMO', 'MOOV_FLOOZ'], example: 'MTN_MOMO' })
-  momo_provider!: 'MTN_MOMO' | 'MOOV_FLOOZ';
+  momoProvider!: 'MTN_MOMO' | 'MOOV_FLOOZ';
 
   @ApiProperty({ example: '+22997000000', description: 'Numéro MoMo destinataire du retrait' })
-  momo_number!: string;
+  momoNumber!: string;
 }

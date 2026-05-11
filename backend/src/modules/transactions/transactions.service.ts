@@ -107,7 +107,7 @@ export class TransactionsService {
     dto: DepositDto,
   ): Promise<DepositInitiatedResponse> {
     const user = await this.assertInvestorUser(userId);
-    const gateway = this.gatewayRouter.resolveByMomoProvider(dto.momo_provider);
+    const gateway = this.gatewayRouter.resolveByMomoProvider(dto.momoProvider);
     const reference = generateReference();
 
     const created = await this.prisma.transaction.create({
@@ -117,7 +117,7 @@ export class TransactionsService {
         status: 'PENDING',
         payment_gateway: gateway.gateway,
         momo_reference: reference,
-        momo_provider: dto.momo_provider,
+        momo_provider: dto.momoProvider,
         provider_status: 'INITIATED_LOCAL',
         created_by: userId,
       },
@@ -129,8 +129,8 @@ export class TransactionsService {
         this.buildGatewayContext(
           reference,
           dto.amount,
-          dto.momo_provider,
-          dto.momo_phone,
+          dto.momoProvider,
+          dto.momoPhone,
           user,
           'Dépôt wallet Nexus',
           gateway.gateway,
@@ -193,7 +193,7 @@ export class TransactionsService {
       );
     }
 
-    const gateway = this.gatewayRouter.resolveByMomoProvider(dto.momo_provider);
+    const gateway = this.gatewayRouter.resolveByMomoProvider(dto.momoProvider);
     const reference = generateReference();
 
     const created = await this.prisma.$transaction(async (tx) => {
@@ -204,7 +204,7 @@ export class TransactionsService {
           status: 'PENDING',
           payment_gateway: gateway.gateway,
           momo_reference: reference,
-          momo_provider: dto.momo_provider,
+          momo_provider: dto.momoProvider,
           provider_status: 'INITIATED_LOCAL',
           created_by: userId,
         },
@@ -224,8 +224,8 @@ export class TransactionsService {
         this.buildGatewayContext(
           reference,
           dto.amount,
-          dto.momo_provider,
-          dto.momo_number,
+          dto.momoProvider,
+          dto.momoNumber,
           user,
           'Retrait wallet Nexus',
           gateway.gateway,

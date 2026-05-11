@@ -48,7 +48,7 @@ export class InvestmentsController {
   // ── Routes statiques en premier ───────────────────────────────────────────
 
   @Get('my')
-  @ApiOperation({ summary: 'Mon portefeuille d\'investissements (paginé)' })
+  @ApiOperation({ summary: "Mon portefeuille d'investissements (paginé)" })
   @ApiQuery({ name: 'page', required: false, example: 1 })
   @ApiQuery({ name: 'limit', required: false, example: 10 })
   @ApiQuery({
@@ -80,10 +80,25 @@ export class InvestmentsController {
     return { success: true, data, message: 'Résumé du portefeuille récupéré' };
   }
 
+  // ── Auto-Invest (avant :id pour éviter collision) ────────────────────────
+
+  @Get('auto-invest')
+  @ApiOperation({ summary: 'Consulter sa règle Auto-Invest active' })
+  async getAutoInvestRule(@CurrentUser() user: JwtPayload) {
+    const data = await this.investmentsService.getAutoInvestRule(user.sub);
+    return {
+      success: true,
+      data,
+      message: data
+        ? 'Règle Auto-Invest récupérée'
+        : 'Aucune règle Auto-Invest configurée',
+    };
+  }
+
   // ── Routes paramétriques ──────────────────────────────────────────────────
 
   @Get(':id')
-  @ApiOperation({ summary: 'Détail d\'un investissement' })
+  @ApiOperation({ summary: "Détail d'un investissement" })
   @ApiParam({ name: 'id', description: "UUID de l'investissement" })
   async getInvestmentById(
     @CurrentUser() user: JwtPayload,
@@ -104,7 +119,8 @@ export class InvestmentsController {
   @ApiBody({ type: CreateInvestmentDtoDoc })
   async createInvestment(
     @CurrentUser() user: JwtPayload,
-    @Body(new ZodValidationPipe(createInvestmentSchema)) dto: CreateInvestmentDto,
+    @Body(new ZodValidationPipe(createInvestmentSchema))
+    dto: CreateInvestmentDto,
   ) {
     const data = await this.investmentsService.createInvestment(user.sub, dto);
     return {
@@ -114,23 +130,11 @@ export class InvestmentsController {
     };
   }
 
-  // ── Auto-Invest ───────────────────────────────────────────────────────────
-
-  @Get('auto-invest')
-  @ApiOperation({ summary: 'Consulter sa règle Auto-Invest active' })
-  async getAutoInvestRule(@CurrentUser() user: JwtPayload) {
-    const data = await this.investmentsService.getAutoInvestRule(user.sub);
-    return {
-      success: true,
-      data,
-      message: data ? 'Règle Auto-Invest récupérée' : 'Aucune règle Auto-Invest configurée',
-    };
-  }
-
   @Put('auto-invest')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Créer ou mettre à jour la règle Auto-Invest (activer / désactiver)',
+    summary:
+      'Créer ou mettre à jour la règle Auto-Invest (activer / désactiver)',
   })
   @ApiBody({ type: AutoInvestRuleDtoDoc })
   async setAutoInvestRule(
@@ -138,7 +142,7 @@ export class InvestmentsController {
     @Body(new ZodValidationPipe(autoInvestRuleSchema)) dto: AutoInvestRuleDto,
   ) {
     const data = await this.investmentsService.setAutoInvestRule(user.sub, dto);
-    const action = dto.is_active ? 'activée' : 'désactivée';
+    const action = dto.isActive ? 'activée' : 'désactivée';
     return {
       success: true,
       data,
@@ -149,7 +153,8 @@ export class InvestmentsController {
   @Post('auto-invest/run')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Lancer manuellement l\'Auto-Invest — scanne tous les prêts FUNDING éligibles',
+    summary:
+      "Lancer manuellement l'Auto-Invest — scanne tous les prêts FUNDING éligibles",
   })
   async runAutoInvest(@CurrentUser() user: JwtPayload) {
     const data = await this.investmentsService.runAutoInvest(user.sub);

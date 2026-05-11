@@ -201,7 +201,7 @@ export class UsersService {
         phone: u.phone,
         email: u.email,
         kycSubmittedAt: u.kycSubmittedAt,
-        kyc_status: u.kyc_status,
+          kycStatus: u.kyc_status,
       })),
       total,
       page,
@@ -336,7 +336,7 @@ export class UsersService {
       district: user.district,
       avatar: user.avatar,
       status: user.status,
-      kyc_status: user.kyc_status,
+      kycStatus: user.kyc_status,
       isEmailVerified: user.isEmailVerified,
       role,
       investorData,
@@ -377,7 +377,7 @@ export class UsersService {
   }): KycStatusResponse {
     return {
       userId: user.id,
-      kyc_status: user.kyc_status,
+      kycStatus: user.kyc_status,
       sessionsCompleted: sessionsCompleted(user.kyc_status),
       kycDocumentType: user.kycDocumentType,
       kycDocumentUrl: user.kycDocumentUrl,
