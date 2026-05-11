@@ -66,6 +66,7 @@ async function bootstrap() {
   if ((process.env.NODE_ENV ?? 'development') !== 'production') {
     allowedOrigins.add('http://localhost:8081');
     allowedOrigins.add('http://localhost:3000');
+    allowedOrigins.add('http://localhost:3001'); // dashboard admin
     allowedOrigins.add('exp://localhost:8081');
   }
 
