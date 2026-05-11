@@ -2,6 +2,15 @@
 node_modules/
 *.local
 
+# Outils locaux
+repomix-output.xml
+repomix-instructions.md
+repomix.config.json
+.repomixignore
+.full-stack-feature/
+.full-stack-feature-archived-*/
+.continue/
+
 # NestJS
 /dist
 /node_modules
