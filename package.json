@@ -15,7 +15,8 @@
     "build": "npm run build:backend && npm run build:dashboard",
     "build:backend": "cd backend && npm run build",
     "build:dashboard": "cd dashboard && npm run build",
-    "lint": "cd backend && npm run lint && cd ../dashboard && npm run lint"
+    "lint": "cd backend && npm run lint && cd ../dashboard && npm run lint",
+    "seed": "cd backend && npm run seed"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
