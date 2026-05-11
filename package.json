@@ -1,14 +1,23 @@
 {
-  "name": "nexus-monorepo",
+  "name": "nexus-p2p-lending",
+  "version": "1.0.0",
+  "description": "Nexus — Application P2P Lending Bénin/UEMOA",
   "private": true,
-  "version": "0.0.0",
-  "description": "Nexus - Backend NestJS + Frontend Mobile",
+  "workspaces": [
+    "backend",
+    "dashboard"
+  ],
   "scripts": {
-    "backend:install": "cd backend && npm install",
-    "backend:start": "cd backend && npm run start:dev",
-    "backend:build": "cd backend && npm run build",
-    "backend:test": "cd backend && npm run test",
-    "backend:lint": "cd backend && npm run lint",
-    "backend:prisma": "cd backend && npm run prisma:generate"
+    "dev": "concurrently --names \"BACKEND,DASHBOARD\" --prefix-colors \"cyan,green\" \"npm run dev:backend\" \"npm run dev:dashboard\"",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:dashboard": "cd dashboard && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../dashboard && npm install",
+    "build": "npm run build:backend && npm run build:dashboard",
+    "build:backend": "cd backend && npm run build",
+    "build:dashboard": "cd dashboard && npm run build",
+    "lint": "cd backend && npm run lint && cd ../dashboard && npm run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }
