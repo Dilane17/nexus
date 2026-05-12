@@ -18,29 +18,25 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const [statsRes, loansRes] = await Promise.all([
-          api.get<ApiResponse<DashboardStats>>('/admin/dashboard'),
-          api.get<ApiResponse<{ items: Loan[] }>>('/loans?limit=5&page=1'),
-        ]);
-        setStats(statsRes.data.data);
-        setRecentLoans(loansRes.data.data?.items ?? []);
-      } catch {
-        setError('Impossible de charger les données du tableau de bord.');
-      } finally {
-        setLoading(false);
+      const [statsRes, loansRes] = await Promise.allSettled([
+        api.get<ApiResponse<DashboardStats>>('/admin/dashboard'),
+        api.get<ApiResponse<{ items: Loan[] }>>('/loans/all?limit=5&page=1'),
+      ]);
+
+      if (statsRes.status === 'fulfilled') {
+        setStats(statsRes.value.data.data);
+      } else {
+        setError('Statistiques indisponibles — vérifiez la connexion au backend.');
       }
+
+      if (loansRes.status === 'fulfilled') {
+        setRecentLoans(loansRes.value.data.data?.items ?? []);
+      }
+
+      setLoading(false);
     };
     load();
   }, []);
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-[8px] p-4 text-sm text-[#991B1B]">
-        {error}
-      </div>
-    );
-  }
 
   const loanColumns: Column[] = [
     {
@@ -85,6 +81,12 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-bold text-[#1A3A5C]">Tableau de bord</h1>
         <p className="text-sm text-gray-500 mt-0.5">Vue d&apos;ensemble de la plateforme</p>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-[8px] p-3 text-sm text-[#991B1B]">
+          {error}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatCard
