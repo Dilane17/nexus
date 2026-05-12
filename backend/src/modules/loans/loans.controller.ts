@@ -79,6 +79,20 @@ export class LoansController {
     };
   }
 
+  @Get('all')
+  @UseGuards(RolesGuard)
+  @Roles('admin')
+  @ApiOperation({ summary: '[Admin] Tous les prêts — toutes statuts confondus' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 50 })
+  async getAllLoans(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(50), ParseIntPipe) limit: number,
+  ) {
+    const data = await this.loansService.getAllLoans(page, limit);
+    return { success: true, data, message: 'Tous les prêts récupérés' };
+  }
+
   @Get('pending-imf')
   @UseGuards(RolesGuard)
   @Roles('imf_staff', 'admin')

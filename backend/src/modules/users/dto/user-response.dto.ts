@@ -21,7 +21,7 @@ export interface KycStatusResponse {
 // ── Dossiers KYC en attente ───────────────────────────────────────────────────
 
 export interface PendingKycItem {
-  userId: string;
+  id: string;
   firstName: string;
   lastName: string;
   phone: string | null;

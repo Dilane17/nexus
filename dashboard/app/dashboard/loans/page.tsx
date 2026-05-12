@@ -30,7 +30,7 @@ export default function LoansPage() {
 
   const loadAll = async () => {
     try {
-      const res = await api.get<ApiResponse<PaginatedResponse<Loan>>>('/loans?limit=50&page=1');
+      const res = await api.get<ApiResponse<PaginatedResponse<Loan>>>('/loans/all?limit=50&page=1');
       setAllLoans(res.data.data.items ?? []);
     } catch {
       setError('Impossible de charger les prêts.');

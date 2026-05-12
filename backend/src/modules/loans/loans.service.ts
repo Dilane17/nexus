@@ -290,8 +290,11 @@ export class LoansService {
         where: { status: 'PENDING_IMF' },
         select: {
           id: true,
+          borrower_id: true,
           amount: true,
+          interest_rate: true,
           duration_months: true,
+          status: true,
           purpose: true,
           created_at: true,
           borrowers: {
@@ -316,23 +319,64 @@ export class LoansService {
     ]);
 
     return {
-      items: loans.map((l) => ({
-        id: l.id,
-        amount:
-          l.amount as PaginatedPendingImfResponse['items'][number]['amount'],
-        durationMonths: l.duration_months,
-        purpose: l.purpose,
-        createdAt: l.created_at,
-        borrower: {
-          userId: l.borrowers.id,
-          firstName: l.borrowers.user.firstName,
-          lastName: l.borrowers.user.lastName,
-          phone: l.borrowers.user.phone,
-          hybridScore: l.borrowers.borrower_scores[0]
-            ? Number(l.borrowers.borrower_scores[0].hybrid_score)
-            : null,
+      items: loans.map((l) => {
+        const hybridScore = l.borrowers.borrower_scores[0]
+          ? Number(l.borrowers.borrower_scores[0].hybrid_score)
+          : null;
+        return {
+          id: l.id,
+          borrowerId: l.borrower_id,
+          amount: l.amount as PaginatedPendingImfResponse['items'][number]['amount'],
+          interestRate: l.interest_rate as PaginatedPendingImfResponse['items'][number]['interestRate'],
+          durationMonths: l.duration_months,
+          status: l.status,
+          purpose: l.purpose,
+          createdAt: l.created_at,
+          hybridScore,
+          borrower: {
+            userId: l.borrowers.id,
+            firstName: l.borrowers.user.firstName,
+            lastName: l.borrowers.user.lastName,
+            phone: l.borrowers.user.phone,
+            hybridScore,
+          },
+        };
+      }),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  // ── Tous les prêts (Admin) ───────────────────────────────────────────────────
+
+  async getAllLoans(page: number, limit: number): Promise<PaginatedLoansResponse> {
+    const skip = (page - 1) * limit;
+    const [loans, total] = await Promise.all([
+      this.prisma.loan.findMany({
+        select: {
+          ...LOAN_SELECT,
+          borrowers: {
+            select: {
+              user: { select: { firstName: true, lastName: true, email: true } },
+            },
+          },
         },
-      })),
+        orderBy: { created_at: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.loan.count(),
+    ]);
+
+    return {
+      items: loans.map((l) =>
+        toLoanResponse(l, {
+          // @ts-expect-error borrowers comes from joined select
+          borrower: l.borrowers?.user,
+        }),
+      ),
       total,
       page,
       limit,

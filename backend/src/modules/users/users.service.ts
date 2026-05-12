@@ -195,7 +195,7 @@ export class UsersService {
 
     return {
       items: items.map((u) => ({
-        userId: u.id,
+        id: u.id,
         firstName: u.firstName,
         lastName: u.lastName,
         phone: u.phone,

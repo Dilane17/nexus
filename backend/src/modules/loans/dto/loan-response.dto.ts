@@ -23,10 +23,14 @@ export interface LoanResponse {
 
 export interface PendingImfLoan {
   id: string;
+  borrowerId: string;
   amount: Decimal;
+  interestRate: Decimal;
   durationMonths: number;
+  status: string;
   purpose: string | null;
   createdAt: Date;
+  hybridScore: number | null;
   borrower: {
     userId: string;
     firstName: string;

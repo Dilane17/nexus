@@ -26,18 +26,18 @@ const variantClasses: Record<BadgeVariant, string> = {
 };
 
 interface BadgeProps {
-  status: string;
+  status?: string;
   label?: string;
   className?: string;
 }
 
 export default function Badge({ status, label, className = '' }: BadgeProps) {
-  const variant: BadgeVariant = STATUS_MAP[status] ?? 'neutral';
+  const variant: BadgeVariant = STATUS_MAP[status ?? ''] ?? 'neutral';
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${variantClasses[variant]} ${className}`}
     >
-      {label ?? status.replace(/_/g, ' ')}
+      {label ?? status?.replace(/_/g, ' ') ?? '—'}
     </span>
   );
 }
